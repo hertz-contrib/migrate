@@ -545,7 +545,7 @@ func handler(
 
 - resp.WriteTo ->
 
-## fasthttp.ResponseHeader
+## [fasthttp.ResponseHeader](https://pkg.go.dev/github.com/valyala/fasthttp#ResponseHeader)
 
 ### No Changed Function
 
