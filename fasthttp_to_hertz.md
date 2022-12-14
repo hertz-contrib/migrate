@@ -5,7 +5,12 @@
 - All the pseudocode below assumes ctx have these types:
 
 ```Go
-  func handler(ctx *fasthttp.RequestCtx){..}    func handler(      c context.Context      ctx *app.RequestContext  ){..}
+func handler(ctx *fasthttp.RequestCtx){..}
+
+func handler(
+    c context.Context
+    ctx *app.RequestContext
+){..}
 ```
 
 ### No Changed Function
