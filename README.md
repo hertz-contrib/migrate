@@ -2,7 +2,7 @@
 
 ## 迁移脚本
 
-Hertz-contrib 下提供了其他框架( Gin，FastHTTP ) 迁移至 Hertz 的脚本，具体使用方式如下
+Hertz-contrib 下提供了其他框架( FastHTTP ) 迁移至 Hertz 的脚本，具体使用方式如下
 
 ```shell
 cd your_project_path
@@ -91,18 +91,8 @@ func main() {
 }
 ```
 
-## Gin
-
-- TODO
-
 ## 附录
 
 ### [FastHTTP -> Hertz conversion table](./fasthttp_to_hertz.md)
 
-### Gin -> Hertz conversion table
-
-- TODO
-
-### Hertz API Doc
-
-https://pkg.go.dev/github.com/cloudwego/hertz
+### [Hertz API Doc](https://pkg.go.dev/github.com/cloudwego/hertz)
