@@ -7,7 +7,5 @@ header:
     - "**/*.go"
     - "**/*.s"
     - "**/*.py"
-    - "**/*.sh"
 
   comment: on-failure
-
