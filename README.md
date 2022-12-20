@@ -23,7 +23,7 @@ sh -c "$(curl -fsSL https://raw.github.com/hertz-contrib/migrate/main/migrate.sh
 // fasthttp request handler
 type RequestHandler = func(ctx *fasthttp.RequestCtx)
 
-// the corresponding hertz request handler
+// the corresponding Hertz request handler
 type HandlerFunc = func(c context.Context, ctx *app.RequestContext)
 ```
 
@@ -81,7 +81,7 @@ func main() {
 ```
 
 ```Go
-// hertz example
+// Hertz example
 func main() {
      r := server.Default(server.WithHostPorts(":8080"))
 
@@ -99,24 +99,24 @@ func main() {
 - 具体例子如下
 
 ```Go
-// gin request handler
+// Gin request handler
 type RequestHandler = func(ctx *gin.Context)
 
-// the corresponding hertz request handler
+// the corresponding Hertz request handler
 type HandlerFunc = func(c context.Context, ctx *app.RequestContext)
 ```
 
 ## 参数绑定
 
-- hertz 目前只支持 Bind 绑定所有的数据，不支持单独绑定 Query 或是 Body 中的数据，详细内容请参考[绑定与校验](https://www.cloudwego.io/zh/docs/hertz/tutorials/basic-feature/binding-and-validate/#%E6%94%AF%E6%8C%81%E7%9A%84-tag-%E5%8F%8A%E5%8F%82%E6%95%B0%E7%BB%91%E5%AE%9A%E4%BC%98%E5%85%88%E7%BA%A7)
+- Hertz 目前只支持 Bind 绑定所有的数据，不支持单独绑定 Query 或是 Body 中的数据，详细内容请参考[绑定与校验](https://www.cloudwego.io/zh/docs/hertz/tutorials/basic-feature/binding-and-validate/#%E6%94%AF%E6%8C%81%E7%9A%84-tag-%E5%8F%8A%E5%8F%82%E6%95%B0%E7%BB%91%E5%AE%9A%E4%BC%98%E5%85%88%E7%BA%A7)
 
 ## 设置 Response 数据
 
-- hertz 支持乱序设置 Response 的 Header 和 Body，不像 Gin 必须要求先设置 Header，再设置 Body。
+- Hertz 支持乱序设置 Response 的 Header 和 Body，不像 Gin 必须要求先设置 Header，再设置 Body。
 - 具体例子如下
 
 ```Go
-// The example is valid on hertz
+// The example is valid on Hertz
 func Hello(c context.Context, ctx *app.RequestContext) {
         // First, Set a body
         fmt.Fprintf(ctx, "Hello, World\n")
@@ -128,10 +128,10 @@ func Hello(c context.Context, ctx *app.RequestContext) {
 
 ## ListenAndServe
 
-- hertz 没有实现 [http.Handler](https://pkg.go.dev/net/http#Handler)，不能使用 http.Server 来监听端口。同时，hertz 具体的监听参数要在初始化参数中确定，详细参数参考 [server package - github.com/cloudwego/hertz/pkg/app/server - Go Packages](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/app/server#New)。
+- Hertz 没有实现 [http.Handler](https://pkg.go.dev/net/http#Handler)，不能使用 http.Server 来监听端口。同时，Hertz 具体的监听参数要在初始化参数中确定，详细参数参考 [server package - github.com/cloudwego/hertz/pkg/app/server - Go Packages](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/app/server#New)。
 
 ```Go
-// gin Run or use http.Server
+// Gin Run or use http.Server
 func main() {
     r := gin.Default()
 
@@ -148,7 +148,7 @@ func main() {
 ```
 
 ```Go
-// hertz example
+// Hertz example
 func main() {
      r := server.Default(server.WithHostPorts(":8080"))
 
