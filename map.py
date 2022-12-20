@@ -291,4 +291,295 @@ package_map = {
             "afterName": "Default",
         }
     ],
+    "github.com/gin-gonic/gin": [
+        {
+            "name": "Context",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app",
+            "afterName": "RequestContext",
+        },
+        {
+            "name": "Version",
+            "pkgName": "github.com/cloudwego/hertz/cmd/hz/meta",
+        },
+        {
+            "name": "Mode",
+            "pkgName": "github.com/cloudwego/hertz/cmd/hz/meta",
+        },
+        {
+            "name": "Accounts",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/middlewares/server/basic_auth",
+        },
+        {
+            "name": "Engine",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server",
+            "afterName": "Hertz",
+        },
+        {
+            "name": "New",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server",
+        },
+        {
+            "name": "Error",
+            "pkgName": "github.com/cloudwego/hertz/pkg/common/errors",
+        },
+        {
+            "name": "ErrorType",
+            "pkgName": "github.com/cloudwego/hertz/pkg/common/errors",
+        },
+        {
+            "name": "ErrorTypeBind",
+            "pkgName": "github.com/cloudwego/hertz/pkg/common/errors",
+        },
+        {
+            "name": "H",
+            "pkgName": "github.com/cloudwego/hertz/pkg/common/utils",
+        },
+        {
+            "name": "HandlerFunc",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app",
+        },
+        {
+            "name": "BasicAuth",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/middlewares/server/basic_auth",
+        },
+        {
+            "name": "BasicAuthForRealm",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/middlewares/server/basic_auth",
+        },
+        {
+            "name": "Bind",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/binding",
+        },
+        {
+            "name": "Logger",
+            "pkgName": "github.com/cloudwego/hertz/pkg/common/hlog",
+        },
+        {
+            "name": "Recovery",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/middlewares/server/recovery",
+        },
+        {
+            "name": "HandlersChain",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app",
+        },
+        {
+            "name": "IRouter",
+            "pkgName": "github.com/cloudwego/hertz/pkg/route",
+        },
+        {
+            "name": "IRoutes",
+            "pkgName": "github.com/cloudwego/hertz/pkg/route",
+        },
+        {
+            "name": "Param",
+            "pkgName": "github.com/cloudwego/hertz/pkg/route/param",
+        },
+        {
+            "name": "Params",
+            "pkgName": "github.com/cloudwego/hertz/pkg/route/param",
+        },
+        {
+            "name": "RouteInfo",
+            "pkgName": "github.com/cloudwego/hertz/pkg/route",
+        },
+        {
+            "name": "RouterGroup",
+            "pkgName": "github.com/cloudwego/hertz/pkg/route",
+        },
+        {
+            "name": "RoutesInfo",
+            "pkgName": "github.com/cloudwego/hertz/pkg/route",
+        },
+        {
+            "name": "Default",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server",
+        },
+    ],
+    "github.com/gin-gonic/gin/render": [
+        {
+            "name": "Data",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/render",
+        },
+        {
+            "name": "Delims",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/render",
+        },
+        {
+            "name": "HTML",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/render",
+        },
+        {
+            "name": "HTMLDebug",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/render",
+        },
+        {
+            "name": "HTMLProduction",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/render",
+        },
+        {
+            "name": "HTMLRender",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/render",
+        },
+        {
+            "name": "IndentedJSON",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/render",
+        },
+        {
+            "name": "ProtoBuf",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/render",
+        },
+        {
+            "name": "PureJSON",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/render",
+        },
+        {
+            "name": "Reader",
+            "pkgName": "github.com/cloudwego/hertz/pkg/network",
+        },
+        {
+            "name": "Render",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/render",
+        },
+        {
+            "name": "String",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/render",
+        },
+        {
+            "name": "XML",
+            "pkgName": "github.com/cloudwego/hertz/pkg/app/server/render",
+        },
+    ],
+    "github.com/gin-contrib/cors": [
+        {
+            "name": "Default",
+            "pkgName": "github.com/hertz-contrib/cors",
+        },
+        {"name": "New", "pkgName": "github.com/hertz-contrib/cors"},
+        {
+            "name": "Config",
+            "pkgName": "github.com/hertz-contrib/cors",
+        },
+        {
+            "name": "DefaultConfig",
+            "pkgName": "github.com/hertz-contrib/cors",
+        },
+    ],
+    "github.com/appleboy/gin-jwt/v2": [
+        {
+            "name": "GetToken",
+            "pkgName": "github.com/hertz-contrib/jwt",
+        },
+        {"name": "New", "pkgName": "github.com/hertz-contrib/jwt"},
+        {
+            "name": "MapClaims",
+            "pkgName": "github.com/hertz-contrib/jwt",
+        },
+        {
+            "name": "ExtractClaims",
+            "pkgName": "github.com/hertz-contrib/jwt",
+        },
+        {
+            "name": "ExtractClaimsFromToken",
+            "pkgName": "github.com/hertz-contrib/jwt",
+        },
+        {
+            "name": "GinJWTMiddleware",
+            "pkgName": "github.com/hertz-contrib/jwt",
+            "afterName": "HertzJWTMiddleware",
+        },
+    ],
+    "github.com/swaggo/gin-swagger": [
+        {
+            "name": "CustomWrapHandler",
+            "pkgName": "github.com/hertz-contrib/swagger",
+        },
+        {
+            "name": "DeepLinking",
+            "pkgName": "github.com/hertz-contrib/swagger",
+        },
+        {
+            "name": "DefaultModelsExpandDepth",
+            "pkgName": "github.com/hertz-contrib/swagger",
+        },
+        {
+            "name": "DocExpansion",
+            "pkgName": "github.com/hertz-contrib/swagger",
+        },
+        {
+            "name": "InstanceName",
+            "pkgName": "github.com/hertz-contrib/swagger",
+        },
+        {
+            "name": "Oauth2DefaultClientID",
+            "pkgName": "github.com/hertz-contrib/swagger",
+        },
+        {
+            "name": "PersistAuthorization",
+            "pkgName": "github.com/hertz-contrib/swagger",
+        },
+        {
+            "name": "URL",
+            "pkgName": "github.com/hertz-contrib/swagger",
+        },
+        {
+            "name": "WrapHandler",
+            "pkgName": "github.com/hertz-contrib/swagger",
+        },
+        {
+            "name": "Config",
+            "pkgName": "github.com/hertz-contrib/swagger",
+        },
+    ],
+    "github.com/gin-contrib/pprof": [
+        {
+            "name": "DefaultPrefix",
+            "pkgName": "github.com/hertz-contrib/pprof",
+        },
+        {
+            "name": "Register",
+            "pkgName": "github.com/hertz-contrib/pprof",
+        },
+        {
+            "name": "RouteRegister",
+            "pkgName": "github.com/hertz-contrib/pprof",
+        },
+    ],
+    "github.com/gin-contrib/requestid": [
+        {
+            "name": "Get",
+            "pkgName": "github.com/hertz-contrib/requestid",
+        },
+        {
+            "name": "New",
+            "pkgName": "github.com/hertz-contrib/requestid",
+        },
+        {
+            "name": "Generator",
+            "pkgName": "github.com/hertz-contrib/requestid",
+        },
+        {
+            "name": "Handler",
+            "pkgName": "github.com/hertz-contrib/requestid",
+        },
+        {
+            "name": "HeaderStrKey",
+            "pkgName": "github.com/hertz-contrib/requestid",
+        },
+        {
+            "name": "Option",
+            "pkgName": "github.com/hertz-contrib/requestid",
+        },
+        {
+            "name": "WithCustomHeaderStrKey",
+            "pkgName": "github.com/hertz-contrib/requestid",
+        },
+        {
+            "name": "WithGenerator",
+            "pkgName": "github.com/hertz-contrib/requestid",
+        },
+        {
+            "name": "WithHandler",
+            "pkgName": "github.com/hertz-contrib/requestid",
+        },
+    ],
 }

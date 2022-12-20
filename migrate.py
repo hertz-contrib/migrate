@@ -220,6 +220,10 @@ class Transfer(object):
                     r"(GET|POST|DELETE|OPTION|PUT|PATCH|HEAD|Any|USE)\(", line
                 ):
                     line = line.strip()
+                    # delete comment
+                    line_with_comment = line.split("//")
+                    line = line_with_comment[0]
+
                     items = line.split(",")
                     last_item = items[-1]
                     tmp = re.findall(r"[^\W0-9]\w*", last_item)
