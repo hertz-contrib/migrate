@@ -5,8 +5,138 @@
 - All the pseudocode below assumes ctx have these types:
 
 ```Go
-  func handler(ctx *gin.Context){..}    func handler(      c context.Context      ctx *app.RequestContext  ){..}
+func handler(ctx *gin.Context){..}
+->
+func handler(
+c context.Context
+ctx *app.RequestContext
+){..}
 ```
+
+### Need Change Function
+
+- ctx.Cookie -> [ctx.Cookie](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/app#RequestContext.Cookie)
+
+- ctx.SetCookie -> [ctx.SetCookie](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/app#RequestContext.SetCookie)
+
+- ctx.SetSameSite -> use [ctx.SetCookie](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/app#RequestContext.SetCookie) directly
+
+- ctx.RemoteIP -> net.SplitHostPort(strings.TrimSpace([ctx.RemoteAddr()](https://pkg.go.dev/github.com/cloudwego/hertz/pkg/app#RequestContext.RemoteAddr).String()))
+
+- ctx.Stream -> use [ctx.SetBodyStream](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/app#RequestContext.SetBodyStream)
+
+### Unimplemented function
+
+- ctx.AddParam
+
+- ctx.AsciiJSON
+
+- ctx.BindHeader
+
+- ctx.BindJSON
+
+- ctx.BindQuery
+
+- ctx.BindTOML
+
+- ctx.BindUri
+
+- ctx.BindWith
+
+- ctx.BindXML
+
+- ctx.BindYAML
+
+- ctx.DataFromReader
+
+- ctx.GetPostFormArray
+
+- ctx.GetPostFormMap
+
+- ctx.GetQueryArray
+
+- ctx.GetQueryMap
+
+- ctx.IsWebsocket
+
+- ctx.JSONP
+
+- ctx.MustBindWith
+
+- ctx.Negotiate
+
+- ctx.NegotiateFormat
+
+- ctx.PostFormArray
+
+- ctx.PostFormMap
+
+- ctx.QueryArray
+
+- ctx.QueryMap
+
+- ctx.SSEvent
+
+- ctx.SecureJSON
+
+- ctx.SetAccepted
+
+- ctx.ShouldBind
+
+- ctx.ShouldBindBodyWith
+
+- ctx.ShouldBindHeader
+
+- ctx.ShouldBindJSON
+
+- ctx.ShouldBindQuery
+
+- ctx.ShouldBindTOML
+
+- ctx.ShouldBindUri
+
+- ctx.ShouldBindWith
+
+- ctx.ShouldBindXML
+
+- ctx.ShouldBindYAML
+
+- ctx.TOML
+
+- ctx.YAML
+
+## [http.Request](https://pkg.go.dev/net/http#Request)
+
+- r.Method -> [r.Method](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.Method) & [r.SetMethod](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.SetMethod)
+
+- r.URL -> [r.URL](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.URI)
+
+- r.Proto -> [r.Header.GetProtocol](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.GetProtocol)
+
+- r.Header -> [r.Header](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader)
+
+- r.Body -> [r.BodyStream](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.BodyStream) & [r.SetBodyStream](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.SetBodyStream)
+
+- r.ContentLength -> [r.Header.ContentLength](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.ContentLength)
+
+- r.Close -> [r.Header.ConnectionClose](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.ConnectionClose) & [r.Header.SetConnectionClose](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.SetConnectionClose)
+
+- r.Host -> [r.Header.Host](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.Host)
+
+- r.Form -> [r.URL().QueryArgs](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#URI.QueryArgs) & [r.PostArgs](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.PostArgs)
+
+- r.MultipartForm -> [r.MultipartForm](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.MultipartForm)
+
+- r.RemoteAddr -> [r.RemoteAddr](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Response.RemoteAddr)
+
+- r.RequestURI -> [r.Header.RequestURI](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.RequestURI) & [r.SetRequestURI](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.SetRequestURI)
+
+- r.AddCookie -> [r.SetCookie](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.SetCookie)
+
+- r.Cookie -> [r.Header.Cookie](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.Cookie)
+
+- r.UserAgent -> [r.Header.UserAgent](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.UserAgent)
+
 
 ### No Changed Function
 
@@ -133,127 +263,3 @@
 - ctx.Err -> c.Err
 
 - ctx.Value -> c.Value
-
-### Need Change Function
-
-- ctx.Cookie -> [ctx.Cookie](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/app#RequestContext.Cookie)
-
-- ctx.SetCookie -> [ctx.SetCookie](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/app#RequestContext.SetCookie)
-
-- ctx.SetSameSite -> use [ctx.SetCookie](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/app#RequestContext.SetCookie) directly
-
-- ctx.RemoteIP -> net.SplitHostPort(strings.TrimSpace([ctx.RemoteAddr()](https://pkg.go.dev/github.com/cloudwego/hertz/pkg/app#RequestContext.RemoteAddr).String()))
-
-- ctx.Stream -> use [ctx.SetBodyStream](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/app#RequestContext.SetBodyStream)
-
-### Unimplemented function
-
-- ctx.AddParam
-
-- ctx.AsciiJSON
-
-- ctx.BindHeader
-
-- ctx.BindJSON
-
-- ctx.BindQuery
-
-- ctx.BindTOML
-
-- ctx.BindUri
-
-- ctx.BindWith
-
-- ctx.BindXML
-
-- ctx.BindYAML
-
-- ctx.DataFromReader
-
-- ctx.GetPostFormArray
-
-- ctx.GetPostFormMap
-
-- ctx.GetQueryArray
-
-- ctx.GetQueryMap
-
-- ctx.IsWebsocket
-
-- ctx.JSONP
-
-- ctx.MustBindWith
-
-- ctx.Negotiate
-
-- ctx.NegotiateFormat
-
-- ctx.PostFormArray
-
-- ctx.PostFormMap
-
-- ctx.QueryArray
-
-- ctx.QueryMap
-
-- ctx.SSEvent
-
-- ctx.SecureJSON
-
-- ctx.SetAccepted
-
-- ctx.ShouldBind
-
-- ctx.ShouldBindBodyWith
-
-- ctx.ShouldBindHeader
-
-- ctx.ShouldBindJSON
-
-- ctx.ShouldBindQuery
-
-- ctx.ShouldBindTOML
-
-- ctx.ShouldBindUri
-
-- ctx.ShouldBindWith
-
-- ctx.ShouldBindXML
-
-- ctx.ShouldBindYAML
-
-- ctx.TOML
-
-- ctx.YAML
-
-## [http.Request](https://pkg.go.dev/net/http#Request)
-
-- r.Method -> [r.Method](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.Method) & [r.SetMethod](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.SetMethod)
-
-- r.URL -> [r.URL](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.URI)
-
-- r.Proto -> [r.Header.GetProtocol](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.GetProtocol)
-
-- r.Header -> [r.Header](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader)
-
-- r.Body -> [r.BodyStream](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.BodyStream) & [r.SetBodyStream](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.SetBodyStream)
-
-- r.ContentLength -> [r.Header.ContentLength](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.ContentLength)
-
-- r.Close -> [r.Header.ConnectionClose](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.ConnectionClose) & [r.Header.SetConnectionClose](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.SetConnectionClose)
-
-- r.Host -> [r.Header.Host](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.Host)
-
-- r.Form -> [r.URL().QueryArgs](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#URI.QueryArgs) & [r.PostArgs](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.PostArgs)
-
-- r.MultipartForm -> [r.MultipartForm](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.MultipartForm)
-
-- r.RemoteAddr -> [r.RemoteAddr](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Response.RemoteAddr)
-
-- r.RequestURI -> [r.Header.RequestURI](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.RequestURI) & [r.SetRequestURI](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.SetRequestURI)
-
-- r.AddCookie -> [r.SetCookie](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#Request.SetCookie)
-
-- r.Cookie -> [r.Header.Cookie](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.Cookie)
-
-- r.UserAgent -> [r.Header.UserAgent](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/protocol#RequestHeader.UserAgent)

@@ -6,7 +6,7 @@
 
 ```Go
 func handler(ctx *fasthttp.RequestCtx){..}
-
+->
 func handler(
     c context.Context
     ctx *app.RequestContext
