@@ -9,7 +9,10 @@ cd your_project_path
 sh -c "$(curl -fsSL https://raw.github.com/hertz-contrib/migrate/main/migrate.sh)"
 ```
 
-脚本处理后，仍有小部分无法自动迁移，需要手动迁移，迁移注意事项如下
+脚本处理后，仍有小部分无法自动迁移，需要手动迁移。
+迁移小 tip：比如要修改 Header 的 API，那 Header 是在 Request（Response）中，那 Hertz 中的 Api 就是 `ctx.Request.Header.XXX()`，其他 API 同理。为了方便用户使用，Hertz 也在 ctx 上添加了高频使用的 API，比如获取 Body 时使用 `ctx.Body` 就可以，不用使用 `ctx.Request.Body()` 了。
+
+其他迁移注意事项如下
 
 ## FastHTTP
 
