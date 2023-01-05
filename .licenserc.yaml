@@ -6,6 +6,5 @@ header:
   paths:
     - "**/*.go"
     - "**/*.s"
-    - "**/*.py"
 
   comment: on-failure
