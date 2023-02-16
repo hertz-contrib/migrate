@@ -25,6 +25,62 @@ ctx *app.RequestContext
 
 - ctx.Stream -> use [ctx.SetBodyStream](https://pkg.go.dev/github.com/cloudwego/hertz@v0.4.1/pkg/app#RequestContext.SetBodyStream)
 
+- Request header iteration
+
+```go
+// gin: 
+for key := range c.Request.Header {
+        value := c.Request.Header.Get(key)
+        c.Set(key, value)
+}
+// hertz: 
+c.Request.Header.VisitAll(
+        func(k, v []byte) {
+                key := string(k)
+                value := string(v)
+                c.Set(key, value)
+})
+```
+
+- request query args iteration
+
+```go
+// gin:
+for k, v := range c.Request.URL.Query() {
+   if len(v) > 0 {
+      req.data[k] = v[0]
+   }
+}
+// hertz: 
+c.Request.URI().QueryArgs().VisitAll(func(k, v []byte) {
+   strK := string(k)
+   if _, ok := req.data[strK]; !ok {
+      req.data[strK] = string(v)
+   }
+})
+```
+
+- request post args iteration
+
+```go
+// gin: 
+if c.Request.ParseForm() != nil {
+   for k, v := range c.Request.PostForm {
+      if len(v) > 0 {
+         req.data[k] = v[0]
+      }
+   }
+}
+
+// hertz:
+c.Request.PostArgs().VisitAll(func(k, v []byte) {
+   strK := string(k)
+   if _, ok := req.data[strK]; !ok {
+      req.data[strK] = string(v)
+   }
+})
+```
+
 ### Unimplemented function
 
 - ctx.AddParam
