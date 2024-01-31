@@ -1,12 +1,14 @@
 package config
 
-type HertzOption struct {
+type Config struct {
+	SrvVar string
+
 	Addr         string
 	IdleTimeout  string
 	ReadTimeout  string
 	WriteTimeout string
 }
 
-func NewHertzOption() *HertzOption {
-	return &HertzOption{}
+func NewConfig() *Config {
+	return &Config{}
 }

@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	. "go/ast"
 	"go/token"
 	"strconv"
@@ -69,6 +68,12 @@ func IsHttpRequest(t *Field) bool {
 }
 
 func PackHandleFunc(cur *astutil.Cursor, fset *token.FileSet, file *File) {
+	if selExpr, ok := cur.Node().(*SelectorExpr); ok {
+		if selExpr.Sel.Name == "HandleFunc" {
+			selExpr.Sel.Name = "Any"
+		}
+	}
+
 	fieldList, ok := cur.Node().(*FieldList)
 	if ok {
 		if len(fieldList.List) == 2 {
@@ -137,7 +142,7 @@ func PackFprintf(cur *astutil.Cursor) {
 	}
 }
 
-func PackNewServeMux(cur *astutil.Cursor, fset *token.FileSet, file *File, opts *config.HertzOption) {
+func PackNewServeMux(cur *astutil.Cursor, fset *token.FileSet, file *File, cfg *config.Config) {
 	assign, ok := cur.Node().(*AssignStmt)
 	if ok {
 		if len(assign.Lhs) == 1 && len(assign.Rhs) == 1 {
@@ -147,7 +152,8 @@ func PackNewServeMux(cur *astutil.Cursor, fset *token.FileSet, file *File, opts 
 						astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app/server")
 						callExpr.Fun.(*SelectorExpr).X.(*Ident).Name = "server"
 						callExpr.Fun.(*SelectorExpr).Sel.Name = "Default"
-						newOptions(callExpr, opts)
+						cfg.SrvVar = assign.Lhs[0].(*Ident).Name
+						newOptions(callExpr, cfg)
 					}
 				}
 			}
@@ -155,10 +161,9 @@ func PackNewServeMux(cur *astutil.Cursor, fset *token.FileSet, file *File, opts 
 	}
 }
 
-func GetOptionsFromHttpServer(cur *astutil.Cursor, opts *config.HertzOption) {
+func GetOptionsFromHttpServer(cur *astutil.Cursor, cfg *config.Config) {
 	block, ok := cur.Node().(*BlockStmt)
 	if !ok {
-		fmt.Println("函数体代码不是一个有效的块语句")
 		return
 	}
 
@@ -168,12 +173,13 @@ func GetOptionsFromHttpServer(cur *astutil.Cursor, opts *config.HertzOption) {
 		if assign, ok := stmt.(*AssignStmt); ok {
 			// 判断赋值语句的左右操作数是否符合条件
 			if len(assign.Lhs) == 1 && len(assign.Rhs) == 1 {
-				if ident, ok := assign.Lhs[0].(*Ident); ok && ident.Name == "svr" {
+				if _, ok := assign.Lhs[0].(*Ident); ok {
 					if compLit, ok := assign.Rhs[0].(*CompositeLit); ok {
 						if selExpr, ok := compLit.Type.(*SelectorExpr); ok {
 							if selExpr.X.(*Ident).Name == "http" && selExpr.Sel.Name == "Server" {
 								// 找到目标语句，保存到 index 变量中
 								index = i
+
 								for _, elt := range compLit.Elts {
 									if kvExpr, ok := elt.(*KeyValueExpr); ok {
 										key := kvExpr.Key.(*Ident).Name
@@ -182,17 +188,17 @@ func GetOptionsFromHttpServer(cur *astutil.Cursor, opts *config.HertzOption) {
 										case *BasicLit:
 											switch key {
 											case "Addr":
-												opts.Addr = t.Value
+												cfg.Addr = t.Value
 											}
 										case *SelectorExpr:
 										case *BinaryExpr:
 											switch key {
 											case "IdleTimeout":
-												opts.IdleTimeout = t.X.(*BasicLit).Value
+												cfg.IdleTimeout = t.X.(*BasicLit).Value
 											case "WriteTimeout":
-												opts.WriteTimeout = t.X.(*BasicLit).Value
+												cfg.WriteTimeout = t.X.(*BasicLit).Value
 											case "ReadTimeout":
-												opts.ReadTimeout = t.X.(*BasicLit).Value
+												cfg.ReadTimeout = t.X.(*BasicLit).Value
 											}
 										}
 									}
@@ -210,7 +216,7 @@ func GetOptionsFromHttpServer(cur *astutil.Cursor, opts *config.HertzOption) {
 	// 使用切片操作，将目标语句从语句列表中删除
 }
 
-func newOptions(callExpr *CallExpr, opts *config.HertzOption) {
+func newOptions(callExpr *CallExpr, opts *config.Config) {
 	var args []Expr
 	if opts.Addr != "" {
 		optionFunc := addParamForOptionFunc("server", "WithHostPorts", opts.Addr, token.STRING)
@@ -229,4 +235,14 @@ func newOptions(callExpr *CallExpr, opts *config.HertzOption) {
 		args = append(args, optionFunc)
 	}
 	callExpr.Args = args
+}
+
+func PackListenAndServe(cur *astutil.Cursor, cfg *config.Config) {
+	selExpr, ok := cur.Node().(*SelectorExpr)
+	if ok {
+		if selExpr.Sel.Name == "ListenAndServe" {
+			selExpr.X.(*Ident).Name = cfg.SrvVar
+			selExpr.Sel.Name = "Spin"
+		}
+	}
 }

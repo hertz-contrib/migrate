@@ -1,19 +1,16 @@
 package main
 
 import (
+	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 	"go/ast"
 	"go/parser"
 	"go/printer"
 	"go/token"
+	"golang.org/x/tools/go/ast/astutil"
 	"log"
 	"os"
 	"path/filepath"
-
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
-
-	"golang.org/x/tools/go/ast/astutil"
-
-	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 
 	"github.com/hertz-contrib/migrate/cmd/net/internal/args"
 )
@@ -31,17 +28,18 @@ func main() {
 	}
 
 	utils.AliasMap = utils.GetAllAliasForPackage(fset, file)
-	options := config.NewHertzOption()
+	cfg := config.NewConfig()
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
-		utils.GetOptionsFromHttpServer(c, options)
+		utils.GetOptionsFromHttpServer(c, cfg)
 		return true
 	}, nil)
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
-		utils.PackNewServeMux(c, fset, file, options)
+		utils.PackNewServeMux(c, fset, file, cfg)
 		utils.PackHandleFunc(c, fset, file)
 		utils.PackFprintf(c)
+		utils.PackListenAndServe(c, cfg)
 		return true
 	}, nil)
 
