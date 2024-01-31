@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	. "go/ast"
 	"go/token"
 	"strconv"
@@ -118,7 +119,6 @@ func PackFprintf(cur *astutil.Cursor) {
 		}
 	}
 	if isFmt && isFprintf {
-		// w
 		ident, ok := callExpr.Args[0].(*Ident)
 		if ok {
 			field, ok := ident.Obj.Decl.(*Field)
@@ -156,33 +156,49 @@ func PackNewServeMux(cur *astutil.Cursor, fset *token.FileSet, file *File, opts 
 }
 
 func GetOptionsFromHttpServer(cur *astutil.Cursor, opts *config.HertzOption) {
-	assign, ok := cur.Node().(*AssignStmt)
-	if ok {
-		if len(assign.Lhs) == 1 && len(assign.Rhs) == 1 {
-			if lit, ok := assign.Rhs[0].(*CompositeLit); ok {
-				if selExpr, ok := lit.Type.(*SelectorExpr); ok {
-					if selExpr.X.(*Ident).Name == "http" && selExpr.Sel.Name == "Server" {
-						for _, elt := range lit.Elts {
-							if kvExpr, ok := elt.(*KeyValueExpr); ok {
-								key := kvExpr.Key.(*Ident).Name
-								switch t := kvExpr.Value.(type) {
-								case *Ident:
-								case *BasicLit:
-									switch key {
-									case "Addr":
-										opts.Addr = t.Value
-									}
-								case *SelectorExpr:
-								case *BinaryExpr:
-									switch key {
-									case "IdleTimeout":
-										opts.IdleTimeout = t.X.(*BasicLit).Value
-									case "WriteTimeout":
-										opts.WriteTimeout = t.X.(*BasicLit).Value
-									case "ReadTimeout":
-										opts.ReadTimeout = t.X.(*BasicLit).Value
+	block, ok := cur.Node().(*BlockStmt)
+	if !ok {
+		fmt.Println("函数体代码不是一个有效的块语句")
+		return
+	}
+
+	// 遍历函数体的语句列表，找到 svr := http.Server {...} 这个赋值语句
+	var index int
+	for i, stmt := range block.List {
+		if assign, ok := stmt.(*AssignStmt); ok {
+			// 判断赋值语句的左右操作数是否符合条件
+			if len(assign.Lhs) == 1 && len(assign.Rhs) == 1 {
+				if ident, ok := assign.Lhs[0].(*Ident); ok && ident.Name == "svr" {
+					if compLit, ok := assign.Rhs[0].(*CompositeLit); ok {
+						if selExpr, ok := compLit.Type.(*SelectorExpr); ok {
+							if selExpr.X.(*Ident).Name == "http" && selExpr.Sel.Name == "Server" {
+								// 找到目标语句，保存到 index 变量中
+								index = i
+								for _, elt := range compLit.Elts {
+									if kvExpr, ok := elt.(*KeyValueExpr); ok {
+										key := kvExpr.Key.(*Ident).Name
+										switch t := kvExpr.Value.(type) {
+										case *Ident:
+										case *BasicLit:
+											switch key {
+											case "Addr":
+												opts.Addr = t.Value
+											}
+										case *SelectorExpr:
+										case *BinaryExpr:
+											switch key {
+											case "IdleTimeout":
+												opts.IdleTimeout = t.X.(*BasicLit).Value
+											case "WriteTimeout":
+												opts.WriteTimeout = t.X.(*BasicLit).Value
+											case "ReadTimeout":
+												opts.ReadTimeout = t.X.(*BasicLit).Value
+											}
+										}
 									}
 								}
+								block.List = append(block.List[:index], block.List[index+1:]...)
+								break
 							}
 						}
 					}
@@ -190,6 +206,8 @@ func GetOptionsFromHttpServer(cur *astutil.Cursor, opts *config.HertzOption) {
 			}
 		}
 	}
+
+	// 使用切片操作，将目标语句从语句列表中删除
 }
 
 func newOptions(callExpr *CallExpr, opts *config.HertzOption) {
