@@ -10,12 +10,14 @@ import (
 type Args struct {
 	TargetDir string
 	Filepath  string
+	PrintMode string
 }
 
 func (a *Args) buildFlags() *flag.FlagSet {
 	fset := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
 	fset.StringVar(&a.TargetDir, "target-dir", "", "target directory")
 	fset.StringVar(&a.Filepath, "filepath", "./testdata/server.go", "file to translate")
+	fset.StringVar(&a.PrintMode, "print", "console", "file to translate")
 	return fset
 }
 

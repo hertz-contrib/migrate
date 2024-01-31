@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go/ast"
 	"go/parser"
 	"go/printer"
 	"go/token"
@@ -8,9 +9,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
 
 	"golang.org/x/tools/go/ast/astutil"
+
+	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 
 	"github.com/hertz-contrib/migrate/cmd/net/internal/args"
 )
@@ -26,13 +29,25 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	utils.AliasMap = utils.GetAllAliasForPackage(fset, file)
+	options := config.NewHertzOption()
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
-		utils.PackHandleFunc(c, fset, file)
-		utils.PackFprintf(c, fset, file)
+		utils.GetOptionsFromHttpServer(c, options)
 		return true
 	}, nil)
-	printer.Fprint(os.Stdout, fset, file)
-	//ast.Print(fset, file)
+
+	astutil.Apply(file, func(c *astutil.Cursor) bool {
+		utils.PackNewServeMux(c, fset, file, options)
+		utils.PackHandleFunc(c, fset, file)
+		utils.PackFprintf(c)
+		return true
+	}, nil)
+
+	if _args.PrintMode == "console" {
+		printer.Fprint(os.Stdout, fset, file)
+		return
+	}
+	ast.Print(fset, file)
 }

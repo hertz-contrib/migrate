@@ -7,7 +7,9 @@ import (
 )
 
 func main() {
-	h := server.Default(server.WithHostPorts(":9090"))
+	h := server.Default(
+		server.WithWriteTimeout(30),
+	)
 	h.GET("/", _sayhelloName)
 	h.Spin()
 }
