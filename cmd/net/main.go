@@ -1,8 +1,9 @@
 package main
 
 import (
+	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
-	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/logic"
 	"go/ast"
 	"go/parser"
 	"go/printer"
@@ -27,25 +28,31 @@ func main() {
 		log.Fatal(err)
 	}
 
-	utils.AliasMap = utils.GetAllAliasForPackage(fset, file)
+	logic.AliasMap = logic.GetAllAliasForPackage(fset, file)
 	cfg := config.NewConfig()
+	funcSet := mapset.NewSet[string]()
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
-		utils.GetOptionsFromHttpServer(c, cfg)
+		logic.GetOptionsFromHttpServer(c, cfg)
 		return true
 	}, nil)
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
-		utils.PackNewServeMux(c, fset, file, cfg)
-		utils.PackHandleFunc(c, fset, file)
-		utils.PackFprintf(c)
-		utils.PackListenAndServe(c, cfg)
+		logic.PackNewServeMux(c, fset, file, cfg)
+		logic.PackHandleFunc(c, fset, file)
+		logic.PackFprintf(c)
+		logic.PackListenAndServe(c, cfg)
+		logic.ReplaceNetHttpHandler(c, funcSet)
+		logic.ReplaceHttpError(c)
+		logic.ReplaceRequestURI(c)
+		logic.PackSetStatusCode(c)
 		return true
 	}, nil)
 
 	if _args.PrintMode == "console" {
 		printer.Fprint(os.Stdout, fset, file)
 		return
+	} else {
+		ast.Print(fset, file)
 	}
-	ast.Print(fset, file)
 }

@@ -1,24 +1,28 @@
-package testdata
+package main
 
 import (
-	"fmt"
 	"net/http"
-	"time"
 )
 
 func sayhelloName(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello afei!") //这个写入到w的是输出到客户端的
+	m := r.Method
+	//uri := r.RequestURI
+	//w.WriteHeader(200)
+	//fmt.Fprintf(w, uri)
+	//http.Error(w, "d", http.StatusInternalServerError)
+	//http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 }
 
-func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", sayhelloName) //设置访问的路由
-	svr := http.Server{
-		Addr:         ":9090",
-		Handler:      mux,
-		IdleTimeout:  1 * time.Minute,
-		ReadTimeout:  10 * time.Second,
-		WriteTimeout: 30 * time.Second,
-	}
-	svr.ListenAndServe()
-}
+//
+//func main() {
+//	mux := http.NewServeMux()
+//	mux.HandleFunc("/hello", sayhelloName) //设置访问的路由
+//	svr := http.Server{
+//		Addr:         ":9090",
+//		Handler:      mux,
+//		IdleTimeout:  1 * time.Minute,
+//		ReadTimeout:  10 * time.Second,
+//		WriteTimeout: 30 * time.Second,
+//	}
+//	svr.ListenAndServe()
+//}
