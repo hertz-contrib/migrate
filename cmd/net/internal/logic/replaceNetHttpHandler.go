@@ -1,8 +1,10 @@
 package logic
 
 import (
-	mapset "github.com/deckarep/golang-set/v2"
 	. "go/ast"
+
+	mapset "github.com/deckarep/golang-set/v2"
+
 	"golang.org/x/tools/go/ast/astutil"
 )
 

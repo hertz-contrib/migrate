@@ -5,8 +5,6 @@ import (
 	"go/token"
 	"strconv"
 
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
-
 	"golang.org/x/tools/go/ast/astutil"
 )
 
@@ -65,22 +63,4 @@ func IsHttpRequest(t *Field) bool {
 		return true
 	}
 	return false
-}
-
-func PackHandleFunc(cur *astutil.Cursor, fset *token.FileSet, file *File) {
-	if selExpr, ok := cur.Node().(*SelectorExpr); ok {
-		if selExpr.Sel.Name == "HandleFunc" {
-			selExpr.Sel.Name = "Any"
-		}
-	}
-}
-
-func PackListenAndServe(cur *astutil.Cursor, cfg *config.Config) {
-	selExpr, ok := cur.Node().(*SelectorExpr)
-	if ok {
-		if selExpr.Sel.Name == "ListenAndServe" {
-			selExpr.X.(*Ident).Name = cfg.SrvVar
-			selExpr.Sel.Name = "Spin"
-		}
-	}
 }

@@ -1,8 +1,10 @@
 package logic
 
 import (
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
 	. "go/ast"
+
+	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
+
 	"golang.org/x/tools/go/ast/astutil"
 )
 

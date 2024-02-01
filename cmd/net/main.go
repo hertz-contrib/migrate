@@ -1,17 +1,19 @@
 package main
 
 import (
-	mapset "github.com/deckarep/golang-set/v2"
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
-	"github.com/hertz-contrib/migrate/cmd/net/internal/logic"
 	"go/ast"
 	"go/parser"
 	"go/printer"
 	"go/token"
-	"golang.org/x/tools/go/ast/astutil"
 	"log"
 	"os"
 	"path/filepath"
+
+	mapset "github.com/deckarep/golang-set/v2"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/logic"
+
+	"golang.org/x/tools/go/ast/astutil"
 
 	"github.com/hertz-contrib/migrate/cmd/net/internal/args"
 )
@@ -39,13 +41,14 @@ func main() {
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
 		logic.PackNewServeMux(c, fset, file, cfg)
-		logic.PackHandleFunc(c, fset, file)
+		logic.PackHandleFunc(c)
+		logic.PackSetStatusCode(c)
 		logic.PackFprintf(c)
 		logic.PackListenAndServe(c, cfg)
 		logic.ReplaceNetHttpHandler(c, funcSet)
 		logic.ReplaceHttpError(c)
 		logic.ReplaceRequestURI(c)
-		logic.PackSetStatusCode(c)
+		logic.ReplaceReqMethod(c)
 		return true
 	}, nil)
 

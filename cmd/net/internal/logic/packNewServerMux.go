@@ -1,9 +1,11 @@
 package logic
 
 import (
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
 	. "go/ast"
 	"go/token"
+
+	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
+
 	"golang.org/x/tools/go/ast/astutil"
 )
 
