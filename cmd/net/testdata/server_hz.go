@@ -15,8 +15,9 @@ func main() {
 }
 
 func _sayhelloName(ctx context.Context, c *app.RequestContext) {
-	uri := c.Request.URI().String()
-	println(uri)
+	//uri := c.Request.URI().String()
+	//host := string(c.Host())
+	//println(uri)
 	//m := string(c.Method())
-	c.SetBodyString("Hello afei!")
+	//c.SetBodyString("Hello afei!")
 }

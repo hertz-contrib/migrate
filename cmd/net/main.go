@@ -1,19 +1,17 @@
 package main
 
 import (
+	mapset "github.com/deckarep/golang-set/v2"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/logic"
 	"go/ast"
 	"go/parser"
 	"go/printer"
 	"go/token"
+	"golang.org/x/tools/go/ast/astutil"
 	"log"
 	"os"
 	"path/filepath"
-
-	mapset "github.com/deckarep/golang-set/v2"
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
-	"github.com/hertz-contrib/migrate/cmd/net/internal/logic"
-
-	"golang.org/x/tools/go/ast/astutil"
 
 	"github.com/hertz-contrib/migrate/cmd/net/internal/args"
 )
@@ -49,11 +47,14 @@ func main() {
 		logic.ReplaceHttpError(c)
 		logic.ReplaceRequestURI(c)
 		logic.ReplaceReqMethod(c)
+		logic.ReplaceReqHost(c)
+		logic.ReplaceReqHeader(c)
+		logic.ReplaceReqHeaderOperation(c)
 		return true
 	}, nil)
 
 	if _args.PrintMode == "console" {
-		printer.Fprint(os.Stdout, fset, file)
+		log.Fatal(printer.Fprint(os.Stdout, fset, file))
 		return
 	} else {
 		ast.Print(fset, file)

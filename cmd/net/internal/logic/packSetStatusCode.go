@@ -15,12 +15,15 @@ func PackSetStatusCode(cur *astutil.Cursor) {
 	if !ok {
 		return
 	}
+	if selExpr.Sel == nil {
+		return
+	}
 	if selExpr.Sel.Name == "WriteHeader" {
 		if ident, ok := selExpr.X.(*Ident); ok {
 			if field, ok := ident.Obj.Decl.(*Field); ok {
-				ident, ok := field.Type.(*Ident)
+				expr, ok := field.Type.(*SelectorExpr)
 				if ok {
-					if ident.Name == "ResponseWriter" {
+					if expr.Sel.Name == "ResponseWriter" {
 						se := &SelectorExpr{
 							X:   NewIdent("c"),
 							Sel: NewIdent("SetStatusCode"),

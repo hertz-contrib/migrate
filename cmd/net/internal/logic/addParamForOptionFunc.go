@@ -13,7 +13,7 @@ func addParamForOptionFunc(pack, funcName, value string, valueType token.Token) 
 		},
 		Args: []Expr{
 			&BasicLit{
-				Kind:  token.INT,
+				Kind:  valueType,
 				Value: value,
 			},
 		},

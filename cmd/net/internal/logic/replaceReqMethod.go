@@ -48,31 +48,4 @@ func ReplaceReqMethod(cur *astutil.Cursor) {
 			}
 		}
 	}
-	//if fn, ok := cur.Node().(*FuncDecl); ok {
-	//	for _, stmt := range fn.Body.List {
-	//		if assignStmt, ok := stmt.(*AssignStmt); ok {
-	//			for _, expr := range assignStmt.Rhs {
-	//				if ident, ok := expr.(*Ident); ok && ident.Name == "Method" {
-	//					// 构造新的表达式 string(c.Request.Method())
-	//					newExpr := &CallExpr{
-	//						Fun: &Ident{Name: "string"},
-	//						Args: []Expr{
-	//							&CallExpr{
-	//								Fun: &SelectorExpr{
-	//									X: &SelectorExpr{
-	//										X:   &Ident{Name: "c"},
-	//										Sel: &Ident{Name: "Request"},
-	//									},
-	//									Sel: &Ident{Name: "Method"},
-	//								},
-	//								Args: nil,
-	//							},
-	//						},
-	//					}
-	//					cur.Replace(newExpr)
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
 }

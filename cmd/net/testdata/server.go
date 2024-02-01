@@ -9,8 +9,10 @@ import (
 func sayhelloName(w http.ResponseWriter, r *http.Request) {
 	m := r.Method
 	uri := r.RequestURI
+	host := r.Host
+	r.Header.Del("s")
 	w.WriteHeader(200)
-	fmt.Fprintf(w, uri, m)
+	fmt.Fprintf(w, uri, m, host)
 	http.Error(w, "d", http.StatusInternalServerError)
 	http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 }
