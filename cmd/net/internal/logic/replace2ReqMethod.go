@@ -6,7 +6,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func ReplaceRequestURI(cur *astutil.Cursor) {
+func Replace2ReqMethod(cur *astutil.Cursor) {
 	assignStmt, ok := cur.Node().(*AssignStmt)
 	if !ok {
 		return
@@ -16,7 +16,7 @@ func ReplaceRequestURI(cur *astutil.Cursor) {
 		if !ok {
 			return
 		}
-		if selExpr.Sel.Name == "RequestURI" {
+		if selExpr.Sel.Name == "Method" {
 			if ident, ok := selExpr.X.(*Ident); ok {
 				if field, ok := ident.Obj.Decl.(*Field); ok {
 					starExpr, ok := field.Type.(*StarExpr)
@@ -28,21 +28,21 @@ func ReplaceRequestURI(cur *astutil.Cursor) {
 						return
 					}
 					if selExpr.Sel.Name == "Request" {
-						callExpr := &CallExpr{
-							Fun: &SelectorExpr{
-								X: &CallExpr{
+						newExpr := &CallExpr{
+							Fun: &Ident{Name: "string"},
+							Args: []Expr{
+								&CallExpr{
 									Fun: &SelectorExpr{
 										X: &SelectorExpr{
-											X:   NewIdent("c"),
-											Sel: NewIdent("Request"),
+											X:   &Ident{Name: "c"},
+											Sel: &Ident{Name: "Request"},
 										},
-										Sel: NewIdent("URI"),
+										Sel: &Ident{Name: "Method"},
 									},
 								},
-								Sel: NewIdent("String"),
 							},
 						}
-						assignStmt.Rhs[0] = callExpr
+						assignStmt.Rhs[0] = newExpr
 					}
 				}
 			}

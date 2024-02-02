@@ -184,7 +184,6 @@ func (svc *_service) getOrCreateBooks(ctx context.Context, c *app.RequestContext
 }
 
 func (svc *_service) getUpdateOrDeleteBooks(ctx context.Context, c *app.RequestContext) {
-
 	getId := func(c *app.RequestContext) (int64, error) {
 		id, err := strconv.ParseInt(c.Request.URI().String()[len("api/v1/books/"):], 10, 64)
 		if err != nil {

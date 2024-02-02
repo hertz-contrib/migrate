@@ -59,25 +59,11 @@ func processHttpServerOptions(block *BlockStmt, index int, cfg *config.Config) {
 	for _, elt := range compLit.Elts {
 		if kvExpr, ok := elt.(*KeyValueExpr); ok {
 			key := kvExpr.Key.(*Ident).Name
-			switch t := kvExpr.Value.(type) {
-			case *BasicLit:
-				handleBasicLitOption(cfg, key, t)
-			case *CallExpr:
-				handleCallerExprOption(cfg, key, t)
-			case *BinaryExpr:
-				handleBinaryExprOption(cfg, key, t)
-			}
+			config.ConfigMap[key] = kvExpr.Value
 		}
 	}
-
+	// Remove the http.Server assignment statement
 	block.List = append(block.List[:index], block.List[index+1:]...)
-}
-
-func handleCallerExprOption(cfg *config.Config, key string, t *CallExpr) {
-	switch key {
-	case "Addr":
-		cfg.Addr = t.Args[0].(*BasicLit).Value
-	}
 }
 
 // 处理 BasicLit 类型的配置选项

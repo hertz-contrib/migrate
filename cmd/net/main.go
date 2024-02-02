@@ -28,9 +28,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	logic.AliasMap = logic.GetAllAliasForPackage(fset, file)
 	cfg := config.NewConfig()
 	funcSet := mapset.NewSet[string]()
+	logic.AliasMap = logic.GetAllAliasForPackage(fset, file)
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
 		logic.GetOptionsFromHttpServer(c, cfg)
@@ -43,16 +43,17 @@ func main() {
 		logic.PackSetStatusCode(c)
 		logic.PackFprintf(c)
 		logic.PackListenAndServe(c, cfg)
-		logic.ReplaceNetHttpHandler(c, funcSet)
-		logic.ReplaceHttpError(c)
-		logic.ReplaceRequestURI(c)
-		logic.ReplaceReqMethod(c)
-		logic.ReplaceReqHost(c)
-		logic.ReplaceReqHeader(c)
-		logic.ReplaceReqHeaderOperation(c)
-		logic.ReplaceRespHeader(c)
-		logic.ReplaceReqURLQuery(c)
-		logic.ReplaceReqURLString(c)
+		logic.Replace2NetHttpHandler(c, funcSet)
+		logic.Replace2HttpError(c)
+		logic.Replace2RequestURI(c)
+		logic.Replace2ReqMethod(c)
+		logic.Replace2ReqHost(c)
+		logic.Replace2ReqHeader(c)
+		logic.Replace2ReqHeaderOperation(c)
+		logic.Replace2RespHeader(c)
+		logic.Replace2ReqURLQuery(c)
+		logic.Replace2ReqURLString(c)
+		logic.Replace2ReqFormFile(c)
 		return true
 	}, nil)
 

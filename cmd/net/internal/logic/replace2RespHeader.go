@@ -5,7 +5,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func ReplaceRespHeader(cur *astutil.Cursor) {
+func Replace2RespHeader(cur *astutil.Cursor) {
 	callExpr, ok := cur.Node().(*CallExpr)
 	if !ok {
 		return

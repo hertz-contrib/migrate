@@ -22,7 +22,7 @@ func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File, cfg *
 						callExpr.Fun.(*SelectorExpr).X.(*Ident).Name = "server"
 						callExpr.Fun.(*SelectorExpr).Sel.Name = "Default"
 						cfg.ServerVar = assign.Lhs[0].(*Ident).Name
-						newOptions(callExpr, cfg)
+						newOptions(callExpr, config.ConfigMap)
 					}
 				}
 			}
@@ -48,25 +48,4 @@ func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File, cfg *
 			selExpr.Sel.Name = "Hertz"
 		}
 	}
-}
-
-func newOptions(callExpr *CallExpr, opts *config.Config) {
-	var args []Expr
-	if opts.Addr != "" {
-		optionFunc := addParamForOptionFunc("server", "WithHostPorts", opts.Addr, token.STRING)
-		args = append(args, optionFunc)
-	}
-	if opts.IdleTimeout != "" {
-		optionFunc := addParamForOptionFunc("server", "WithIdleTimeout", opts.IdleTimeout, token.INT)
-		args = append(args, optionFunc)
-	}
-	if opts.WriteTimeout != "" {
-		optionFunc := addParamForOptionFunc("server", "WithWriteTimeout", opts.WriteTimeout, token.INT)
-		args = append(args, optionFunc)
-	}
-	if opts.ReadTimeout != "" {
-		optionFunc := addParamForOptionFunc("server", "WithReadTimeout", opts.ReadTimeout, token.INT)
-		args = append(args, optionFunc)
-	}
-	callExpr.Args = args
 }

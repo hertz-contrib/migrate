@@ -1,5 +1,7 @@
 package config
 
+var ConfigMap = make(map[string]any)
+
 type Config struct {
 	ServerVar string
 

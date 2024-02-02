@@ -8,7 +8,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func ReplaceNetHttpHandler(cur *astutil.Cursor, funcSet mapset.Set[string]) {
+func Replace2NetHttpHandler(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 	var (
 		rwIndex   = -1
 		rIndex    = -1
