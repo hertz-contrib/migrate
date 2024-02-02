@@ -1,0 +1,26 @@
+已经适配完成的 api:
+- srv.ListenAndServe -> h.Spin
+- http.NewServeMux -> server.Default
+- func(w ResponseWriter, r *Request) -> func(ctx context.Context, c *app.RequestContext)
+- req.Header -> c.Request.Header
+- req.Header.Get/Del -> c.Request.Header.Get/Del
+- req.Header.Set/Del -> c.Request.Header.Set/Del
+
+
+- req.Host -> string(c.Request.Host)
+- req.Method -> string(c.Request.Method)
+
+
+- req.RequestURI -> c.Request.URI().String()
+- req.URL.String() -> c.URL.String()
+- req.URL.Query().Get -> c.Query
+
+
+- http.HandlerFunc-> h.Any
+
+- resp.Header() -> c.Response.Header
+- resp.Header().Get/Del -> c.Response.Header.Get/Del
+- resp.Header().Set/Del -> c.Response.Header.Set/Del
+- 从 http.Server struct 中获取的字段(fmt.Sprintf() 等函数组成的属性尚未取到) -> hertz server option 中的配置函数
+- resp.WriteHeader -> c.SetStatusCode
+- http.Error -> c.AbortWithMsg/c.AbortWithStatus

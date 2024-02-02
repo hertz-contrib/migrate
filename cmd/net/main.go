@@ -34,11 +34,11 @@ func main() {
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
 		logic.GetOptionsFromHttpServer(c, cfg)
+		logic.PackServerHertz(c, fset, file, cfg)
 		return true
 	}, nil)
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
-		logic.PackNewServeMux(c, fset, file, cfg)
 		logic.PackHandleFunc(c)
 		logic.PackSetStatusCode(c)
 		logic.PackFprintf(c)
@@ -50,6 +50,9 @@ func main() {
 		logic.ReplaceReqHost(c)
 		logic.ReplaceReqHeader(c)
 		logic.ReplaceReqHeaderOperation(c)
+		logic.ReplaceRespHeader(c)
+		logic.ReplaceReqURLQuery(c)
+		logic.ReplaceReqURLString(c)
 		return true
 	}, nil)
 

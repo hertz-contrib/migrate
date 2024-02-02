@@ -1,7 +1,7 @@
 package config
 
 type Config struct {
-	SrvVar string
+	ServerVar string
 
 	Addr         string
 	IdleTimeout  string

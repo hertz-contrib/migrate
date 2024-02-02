@@ -14,7 +14,7 @@ func PackListenAndServe(cur *astutil.Cursor, cfg *config.Config) {
 			return
 		}
 		if selExpr.Sel.Name == "ListenAndServe" {
-			selExpr.X.(*Ident).Name = cfg.SrvVar
+			selExpr.X.(*Ident).Name = cfg.ServerVar
 			selExpr.Sel.Name = "Spin"
 		}
 	}

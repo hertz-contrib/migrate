@@ -62,6 +62,8 @@ func processHttpServerOptions(block *BlockStmt, index int, cfg *config.Config) {
 			switch t := kvExpr.Value.(type) {
 			case *BasicLit:
 				handleBasicLitOption(cfg, key, t)
+			case *CallExpr:
+				handleCallerExprOption(cfg, key, t)
 			case *BinaryExpr:
 				handleBinaryExprOption(cfg, key, t)
 			}
@@ -69,6 +71,13 @@ func processHttpServerOptions(block *BlockStmt, index int, cfg *config.Config) {
 	}
 
 	block.List = append(block.List[:index], block.List[index+1:]...)
+}
+
+func handleCallerExprOption(cfg *config.Config, key string, t *CallExpr) {
+	switch key {
+	case "Addr":
+		cfg.Addr = t.Args[0].(*BasicLit).Value
+	}
 }
 
 // 处理 BasicLit 类型的配置选项
