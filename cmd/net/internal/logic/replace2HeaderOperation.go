@@ -10,15 +10,14 @@ func Replace2ReqHeaderOperation(cur *astutil.Cursor) {
 	if !ok {
 		return
 	}
-	if len(callExpr.Args) != 2 {
-		return
+	if len(callExpr.Args) == 1 || len(callExpr.Args) == 2 {
+		selExpr, ok := callExpr.Fun.(*SelectorExpr)
+		if !ok {
+			return
+		}
+		replaceSetOrAdd(selExpr, callExpr)
+		replaceDelOrGet(selExpr, callExpr)
 	}
-	selExpr, ok := callExpr.Fun.(*SelectorExpr)
-	if !ok {
-		return
-	}
-	replaceSetOrAdd(selExpr, callExpr)
-	replaceDelOrGet(selExpr, callExpr)
 }
 
 func replaceSetOrAdd(selExpr *SelectorExpr, callExpr *CallExpr) {
