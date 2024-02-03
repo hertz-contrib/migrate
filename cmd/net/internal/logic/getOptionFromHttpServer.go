@@ -8,7 +8,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func GetOptionsFromHttpServer(cur *astutil.Cursor, cfg *config.Config) {
+func GetOptionsFromHttpServer(cur *astutil.Cursor) {
 	block, ok := cur.Node().(*BlockStmt)
 	if !ok {
 		return
@@ -20,7 +20,7 @@ func GetOptionsFromHttpServer(cur *astutil.Cursor, cfg *config.Config) {
 		return
 	}
 
-	processHttpServerOptions(block, index, cfg)
+	processHttpServerOptions(block, index)
 }
 
 // 找到 http.Server 赋值语句的索引
@@ -53,35 +53,15 @@ func findHttpServerAssignment(block *BlockStmt) int {
 }
 
 // 处理 http.Server 赋值语句，更新配置并移除该语句
-func processHttpServerOptions(block *BlockStmt, index int, cfg *config.Config) {
+func processHttpServerOptions(block *BlockStmt, index int) {
 	compLit := block.List[index].(*AssignStmt).Rhs[0].(*CompositeLit)
 
 	for _, elt := range compLit.Elts {
 		if kvExpr, ok := elt.(*KeyValueExpr); ok {
 			key := kvExpr.Key.(*Ident).Name
-			config.ConfigMap[key] = kvExpr.Value
+			config.Map[key] = kvExpr.Value
 		}
 	}
 	// Remove the http.Server assignment statement
 	block.List = append(block.List[:index], block.List[index+1:]...)
-}
-
-// 处理 BasicLit 类型的配置选项
-func handleBasicLitOption(cfg *config.Config, key string, lit *BasicLit) {
-	switch key {
-	case "Addr":
-		cfg.Addr = lit.Value
-	}
-}
-
-// 处理 BinaryExpr 类型的配置选项
-func handleBinaryExprOption(cfg *config.Config, key string, expr *BinaryExpr) {
-	switch key {
-	case "IdleTimeout":
-		cfg.IdleTimeout = expr.X.(*BasicLit).Value
-	case "WriteTimeout":
-		cfg.WriteTimeout = expr.X.(*BasicLit).Value
-	case "ReadTimeout":
-		cfg.ReadTimeout = expr.X.(*BasicLit).Value
-	}
 }

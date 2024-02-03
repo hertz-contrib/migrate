@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 	. "go/ast"
 	"golang.org/x/tools/go/ast/astutil"
 )
@@ -17,22 +18,7 @@ func Replace2ReqHost(cur *astutil.Cursor) {
 		return
 	}
 
-	ident, ok := selExpr.X.(*Ident)
-	if !ok {
-		return
-	}
-
-	if field, ok := ident.Obj.Decl.(*Field); ok {
-		starExpr, ok := field.Type.(*StarExpr)
-		if !ok {
-			return
-		}
-
-		selExpr, ok := starExpr.X.(*SelectorExpr)
-		if !ok || selExpr.Sel.Name != "Request" {
-			return
-		}
-
+	if utils.CheckPtrStructName(selExpr, "Request") {
 		// Create a new expression
 		newExpr := &CallExpr{
 			Fun: &Ident{Name: "string"},

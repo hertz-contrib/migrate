@@ -5,25 +5,29 @@ import (
 )
 
 func sayhelloName(w http.ResponseWriter, r *http.Request) {
+	//r.Form.Get("s")
+	//form := r.MultipartForm.Value
+	//form2 := r.MultipartForm.File
 	//w.Header().Add("s", "s")
 	//w.Header().Del("s")
 	//r.Header.Set("s", "s")
-	r.Header.Del("s")
+	//r.Header.Del("s")
 	//get := r.URL.String()
 	//uri := r.RequestURI()
 	//file, fileHeader, err := r.FormFile("s")
 	//m := r.Method
 	//uri := r.RequestURI
 	//host := r.Host
+	//header := r.Header
 	//w.Header()
 	//r.Header.Del("s")
 	//w.WriteHeader(200)
 	//fmt.Fprintf(w, uri, m, host)
 	//http.Error(w, "d", http.StatusInternalServerError)
 	//http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	w.Write([]byte("Hello World!"))
 }
 
-//
 //func main() {
 //	// svc := &service{}
 //	mux := http.NewServeMux()

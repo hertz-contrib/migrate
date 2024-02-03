@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 	. "go/ast"
 	"golang.org/x/tools/go/ast/astutil"
 )
@@ -16,23 +17,7 @@ func Replace2ReqHeader(cur *astutil.Cursor) {
 		return
 	}
 
-	ident, ok := selExpr.X.(*Ident)
-	if !ok {
-		return
-	}
-
-	if field, ok := ident.Obj.Decl.(*Field); ok {
-		starExpr, ok := field.Type.(*StarExpr)
-		if !ok {
-			return
-		}
-
-		selExpr, ok := starExpr.X.(*SelectorExpr)
-		if !ok || selExpr.Sel.Name != "Request" {
-			return
-		}
-
-		// Create a new expression for the replacement
+	if utils.CheckPtrStructName(selExpr, "Request") {
 		callExpr := &SelectorExpr{
 			X: &SelectorExpr{
 				X:   NewIdent("c"),

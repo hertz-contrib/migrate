@@ -2,7 +2,6 @@ package main
 
 import (
 	mapset "github.com/deckarep/golang-set/v2"
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
 	"github.com/hertz-contrib/migrate/cmd/net/internal/logic"
 	"go/ast"
 	"go/parser"
@@ -28,13 +27,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cfg := config.NewConfig()
 	funcSet := mapset.NewSet[string]()
 	logic.AliasMap = logic.GetAllAliasForPackage(fset, file)
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
-		logic.GetOptionsFromHttpServer(c, cfg)
-		logic.PackServerHertz(c, fset, file, cfg)
+		logic.GetOptionsFromHttpServer(c)
+		logic.PackServerHertz(c, fset, file)
 		return true
 	}, nil)
 
@@ -42,7 +40,7 @@ func main() {
 		logic.PackHandleFunc(c)
 		logic.PackSetStatusCode(c)
 		logic.PackFprintf(c)
-		logic.PackListenAndServe(c, cfg)
+		logic.PackListenAndServe(c)
 		logic.Replace2NetHttpHandler(c, funcSet)
 		logic.Replace2HttpError(c)
 		logic.Replace2RequestURI(c)
@@ -51,9 +49,13 @@ func main() {
 		logic.Replace2ReqHeader(c)
 		logic.Replace2ReqHeaderOperation(c)
 		logic.Replace2RespHeader(c)
+		logic.Replace2RespWrite(c)
 		logic.Replace2ReqURLQuery(c)
 		logic.Replace2ReqURLString(c)
 		logic.Replace2ReqFormFile(c)
+		logic.Replace2ReqFormGet(c)
+		logic.Replace2ReqMultipartForm(c)
+		logic.Replace2ReqMultipartFormOperation(c)
 		return true
 	}, nil)
 

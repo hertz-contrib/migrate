@@ -11,10 +11,14 @@
 - req.RequestURI -> c.Request.URI().String()
 - req.URL.String() -> c.URL.String()
 - req.URL.Query().Get -> c.Query
+- req.Form.Get() -> string(c.FormValue())
+- form := req.MultipartForm -> form, err := c.MultipartForm()
+- form := req.MultipartForm.Value/File ->  _form, err := c.MultiPartForm() form := _form.Value/File
 - http.HandlerFunc-> h.Any
 - resp.Header() -> c.Response.Header
 - resp.Header().Get/Del -> c.Response.Header.Get/Del
 - resp.Header().Set/Del -> c.Response.Header.Set/Del
+- resp.Write -> c.Response.Write
 - 从 http.Server struct 中获取的字段(~~fmt.Sprintf() 等函数组成的属性尚未取到~~ 已支持) -> hertz server option 中的配置函数
 - resp.WriteHeader -> c.SetStatusCode
 - http.Error -> c.AbortWithMsg/c.AbortWithStatus

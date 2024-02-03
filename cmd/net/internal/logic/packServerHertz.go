@@ -7,7 +7,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File, cfg *config.Config) {
+func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	assign, ok := cur.Node().(*AssignStmt)
 	if ok {
 		if len(assign.Lhs) == 1 && len(assign.Rhs) == 1 {
@@ -21,8 +21,8 @@ func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File, cfg *
 						astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app/server")
 						callExpr.Fun.(*SelectorExpr).X.(*Ident).Name = "server"
 						callExpr.Fun.(*SelectorExpr).Sel.Name = "Default"
-						cfg.ServerVar = assign.Lhs[0].(*Ident).Name
-						newOptions(callExpr, config.ConfigMap)
+						config.Map["server"] = assign.Lhs[0].(*Ident).Name
+						newOptions(callExpr, config.Map)
 					}
 				}
 			}

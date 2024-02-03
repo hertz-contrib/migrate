@@ -7,7 +7,7 @@ import (
 
 func Replace2ReqURLString(cur *astutil.Cursor) {
 	selExpr, ok := cur.Node().(*SelectorExpr)
-	if !ok || selExpr.Sel.Name != "String" {
+	if !ok || selExpr.Sel == nil || selExpr.Sel.Name != "String" {
 		return
 	}
 	ce, ok := selExpr.X.(*SelectorExpr)

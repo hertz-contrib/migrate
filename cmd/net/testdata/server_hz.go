@@ -14,11 +14,15 @@ import (
 //}
 
 func _sayhelloName(ctx context.Context, c *app.RequestContext) {
+	//form, err := c.MultipartForm()
+	//value := form.Value
+	//value := string(c.FormValue("name"))
 	//uri := c.Request.URI().String()
 	//host := string(c.Host())
 	//println(uri)
 	//m := string(c.Method())
 	//c.SetBodyString("Hello afei!")
 	//s := c.URI().String()
-	file, err := c.Request.FormFile("s")
+	//file, err := c.Request.FormFile("s")
+	c.Write([]byte("Hello World!"))
 }
