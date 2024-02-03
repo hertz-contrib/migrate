@@ -1,4 +1,4 @@
-package logic
+package netHttp
 
 import (
 	. "go/ast"
@@ -14,8 +14,11 @@ func PackListenAndServe(cur *astutil.Cursor) {
 			return
 		}
 		if selExpr.Sel.Name == "ListenAndServe" {
-			selExpr.X.(*Ident).Name = config.Map["server"].(string)
-			selExpr.Sel.Name = "Spin"
+			v, ok := config.Map["server"]
+			if ok {
+				selExpr.X.(*Ident).Name = v.(string)
+				selExpr.Sel.Name = "Spin"
+			}
 		}
 	}
 }

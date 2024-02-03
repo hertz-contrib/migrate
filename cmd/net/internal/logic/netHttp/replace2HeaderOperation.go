@@ -1,7 +1,8 @@
-package logic
+package netHttp
 
 import (
 	. "go/ast"
+
 	"golang.org/x/tools/go/ast/astutil"
 )
 

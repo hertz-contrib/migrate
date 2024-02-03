@@ -1,10 +1,12 @@
-package logic
+package netHttp
 
 import (
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
-	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 	. "go/ast"
 	"go/token"
+
+	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
+
 	"golang.org/x/tools/go/ast/astutil"
 )
 

@@ -1,9 +1,11 @@
-package logic
+package netHttp
 
 import (
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
 	. "go/ast"
 	"go/token"
+
+	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
+
 	"golang.org/x/tools/go/ast/astutil"
 )
 
@@ -22,7 +24,7 @@ func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 						callExpr.Fun.(*SelectorExpr).X.(*Ident).Name = "server"
 						callExpr.Fun.(*SelectorExpr).Sel.Name = "Default"
 						config.Map["server"] = assign.Lhs[0].(*Ident).Name
-						newOptions(callExpr, config.Map)
+						AddOptionsForServer(callExpr, config.Map)
 					}
 				}
 			}

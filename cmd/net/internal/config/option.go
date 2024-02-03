@@ -1,3 +1,3 @@
 package config
 
-var Map = make(map[string]any)
+var Map = map[string]any{}

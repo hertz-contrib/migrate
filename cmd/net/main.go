@@ -1,18 +1,21 @@
 package main
 
 import (
-	mapset "github.com/deckarep/golang-set/v2"
-	"github.com/hertz-contrib/migrate/cmd/net/internal/logic"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
+	chi "github.com/hertz-contrib/migrate/cmd/net/internal/logic/chi"
 	"go/ast"
 	"go/parser"
 	"go/printer"
 	"go/token"
-	"golang.org/x/tools/go/ast/astutil"
 	"log"
 	"os"
 	"path/filepath"
 
+	mapset "github.com/deckarep/golang-set/v2"
+	nethttp "github.com/hertz-contrib/migrate/cmd/net/internal/logic/netHttp"
+
 	"github.com/hertz-contrib/migrate/cmd/net/internal/args"
+	"golang.org/x/tools/go/ast/astutil"
 )
 
 var _args args.Args
@@ -28,34 +31,20 @@ func main() {
 	}
 
 	funcSet := mapset.NewSet[string]()
-	logic.AliasMap = logic.GetAllAliasForPackage(fset, file)
+	config.Map = make(map[string]any)
+	nethttp.AliasMap = nethttp.GetAllAliasForPackage(fset, file)
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
-		logic.GetOptionsFromHttpServer(c)
-		logic.PackServerHertz(c, fset, file)
+		nethttp.GetOptionsFromHttpServer(c)
+		nethttp.PackServerHertz(c, fset, file)
+		chi.PackChiMux(c, fset, file)
+		chi.PackChiNewRouter(c, fset, file)
 		return true
 	}, nil)
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
-		logic.PackHandleFunc(c)
-		logic.PackSetStatusCode(c)
-		logic.PackFprintf(c)
-		logic.PackListenAndServe(c)
-		logic.Replace2NetHttpHandler(c, funcSet)
-		logic.Replace2HttpError(c)
-		logic.Replace2RequestURI(c)
-		logic.Replace2ReqMethod(c)
-		logic.Replace2ReqHost(c)
-		logic.Replace2ReqHeader(c)
-		logic.Replace2ReqHeaderOperation(c)
-		logic.Replace2RespHeader(c)
-		logic.Replace2RespWrite(c)
-		logic.Replace2ReqURLQuery(c)
-		logic.Replace2ReqURLString(c)
-		logic.Replace2ReqFormFile(c)
-		logic.Replace2ReqFormGet(c)
-		logic.Replace2ReqMultipartForm(c)
-		logic.Replace2ReqMultipartFormOperation(c)
+		chiGroup(c)
+		netHttpGroup(c, funcSet)
 		return true
 	}, nil)
 
@@ -65,4 +54,30 @@ func main() {
 	} else {
 		ast.Print(fset, file)
 	}
+}
+
+func chiGroup(c *astutil.Cursor) {
+	chi.PackChiRouterMethod(c)
+}
+
+func netHttpGroup(c *astutil.Cursor, funcSet mapset.Set[string]) {
+	nethttp.PackHandleFunc(c)
+	nethttp.PackSetStatusCode(c)
+	nethttp.PackFprintf(c)
+	nethttp.PackListenAndServe(c)
+	nethttp.Replace2NetHttpHandler(c, funcSet)
+	nethttp.Replace2HttpError(c)
+	nethttp.Replace2RequestURI(c)
+	nethttp.Replace2ReqMethod(c)
+	nethttp.Replace2ReqHost(c)
+	nethttp.Replace2ReqHeader(c)
+	nethttp.Replace2ReqHeaderOperation(c)
+	nethttp.Replace2RespHeader(c)
+	nethttp.Replace2RespWrite(c)
+	nethttp.Replace2ReqURLQuery(c)
+	nethttp.Replace2ReqURLString(c)
+	nethttp.Replace2ReqFormFile(c)
+	nethttp.Replace2ReqFormGet(c)
+	nethttp.Replace2ReqMultipartForm(c)
+	nethttp.Replace2ReqMultipartFormOperation(c)
 }

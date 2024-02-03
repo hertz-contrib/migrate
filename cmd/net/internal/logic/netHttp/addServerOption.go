@@ -1,4 +1,4 @@
-package logic
+package netHttp
 
 import (
 	. "go/ast"
@@ -20,7 +20,7 @@ func addBasicParamForOptionFunc(pack, funcName, value string, valueType token.To
 	}
 }
 
-func addParamInOption(pack, funcName string, httpProp string, m map[string]any) *CallExpr {
+func addParamInOption(pack, funcName, httpProp string, m map[string]any) *CallExpr {
 	value := m[httpProp]
 	switch httpProp {
 	case "Addr":
@@ -33,6 +33,9 @@ func addParamInOption(pack, funcName string, httpProp string, m map[string]any) 
 			}
 		}
 	case "IdleTimeout", "WriteTimeout", "ReadTimeout":
+		if value == nil {
+			return nil
+		}
 		v, ok := value.(*BinaryExpr).X.(*BasicLit)
 		if ok {
 			return addBasicParamForOptionFunc(pack, funcName, v.Value, v.Kind)
