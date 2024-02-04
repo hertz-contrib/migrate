@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 )
 
@@ -28,45 +29,49 @@ import (
 //	w.Write([]byte("Hello World!"))
 //}
 
-//func __sayhelloName() http.Handler {
-//	println()
-//	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-//		w.Write([]byte("Hello World!"))
-//	})
+//	func __sayhelloName() http.Handler {
+//		println()
+//		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+//			w.Write([]byte("Hello World!"))
+//		})
+//	}
+func ___sayhelloName() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(400)
+		w.Write([]byte("Hello World!"))
+		fmt.Fprintf(w, "Hello World!")
+	}
+}
+
+//type Config struct {
+//	Addr string
 //}
 //
-//func ___sayhelloName() http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//		w.Write([]byte("Hello World!"))
+//func main() {
+//	//svc := &service{}
+//	//mux := http.NewServeMux()
+//	//router := chi.NewRouter()
+//	//router.Get("/api/v1/health", ___sayhelloName())
+//	//router.Method(http.MethodGet, "/api/v1/books", __sayhelloName())
+//	//mux.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
+//	//	w.Write([]byte("Hello World!"))
+//	//})
+//	//mux.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
+//	//	w.Write([]byte("Hello World!"))
+//	//})
+//	//cfg := &Config{
+//	//	Addr: "8080",
+//	//}
+//	svr := http.Server{
+//		//Addr:         cfg.Addr,
+//		//IdleTimeout:  1 * time.Minute,
+//		//ReadTimeout:  10 * time.Second,
+//		//WriteTimeout: 30 * time.Second,
 //	}
+//	svr.ListenAndServe()
 //}
-
-func main() {
-	//svc := &service{}
-	mux := http.NewServeMux()
-	//router := chi.NewRouter()
-	//router.Get("/api/v1/health", ___sayhelloName())
-	//router.Method(http.MethodGet, "/api/v1/books", __sayhelloName())
-	//mux.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
-	//	w.Write([]byte("Hello World!"))
-	//})
-	mux.HandleFunc("/api/v1/health", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello World!"))
-	}))
-	//svr := http.Server{
-	//	Addr:         fmt.Sprintf(":%d", 8080),
-	//	Handler:      svc.Route(),
-	//	IdleTimeout:  1 * time.Minute,
-	//	ReadTimeout:  10 * time.Second,
-	//	WriteTimeout: 30 * time.Second,
-	//}
-	//svr.ListenAndServe()
-}
-
-func (svc *service) Route() *http.ServeMux {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/api/v1/health", svc.healthcheck)
-	mux.HandleFunc("/api/v1/books", svc.getOrCreateBooks)
-	mux.HandleFunc("/api/v1/books/", svc.getUpdateOrDeleteBooks)
-	return mux
-}
+//
+//func Route() *http.ServeMux {
+//	mux := http.NewServeMux()
+//	return mux
+//}

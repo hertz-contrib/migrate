@@ -21,7 +21,10 @@ func addBasicParamForOptionFunc(pack, funcName, value string, valueType token.To
 }
 
 func addParamInOption(pack, funcName, httpProp string, m map[string]any) *CallExpr {
-	value := m[httpProp]
+	value, ok := m[httpProp]
+	if !ok {
+		return nil
+	}
 	switch httpProp {
 	case "Addr":
 		switch v := value.(type) {
@@ -33,13 +36,20 @@ func addParamInOption(pack, funcName, httpProp string, m map[string]any) *CallEx
 			}
 		}
 	case "IdleTimeout", "WriteTimeout", "ReadTimeout":
-		if value == nil {
-			return nil
+		switch vv := value.(type) {
+		case *BinaryExpr:
+			lit, ok := vv.X.(*BasicLit)
+			if ok {
+				return addBasicParamForOptionFunc(pack, funcName, lit.Value, lit.Kind)
+			}
+		case *SelectorExpr:
+			return addBasicParamForOptionFunc(pack, funcName, "1", token.INT)
 		}
-		v, ok := value.(*BinaryExpr).X.(*BasicLit)
-		if ok {
-			return addBasicParamForOptionFunc(pack, funcName, v.Value, v.Kind)
-		}
+		//case "Handler":
+		//	switch v := value.(type) {
+		//	case *CallExpr:
+		//		return v
+		//	}
 	}
 
 	return nil

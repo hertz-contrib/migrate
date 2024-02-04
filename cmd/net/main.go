@@ -37,6 +37,7 @@ func main() {
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
 		nethttp.GetOptionsFromHttpServer(c)
 		nethttp.PackServerHertz(c, fset, file)
+		nethttp.PackSetStatusCode(c)
 		chi.PackChiMux(c, fset, file)
 		chi.PackChiNewRouter(c, fset, file)
 		return true
@@ -62,7 +63,6 @@ func chiGroup(c *astutil.Cursor) {
 
 func netHttpGroup(c *astutil.Cursor, funcSet mapset.Set[string]) {
 	nethttp.PackHandleFunc(c)
-	nethttp.PackSetStatusCode(c)
 	nethttp.PackFprintf(c)
 	nethttp.PackListenAndServe(c)
 	nethttp.Replace2NetHttpHandler(c, funcSet)

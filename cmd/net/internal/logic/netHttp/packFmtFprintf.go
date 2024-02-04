@@ -93,18 +93,41 @@ func updateStmts(blockStmt *BlockStmt, index int, stmt Stmt) {
 
 	callExpr := stmt.(*ExprStmt).X.(*CallExpr)
 	callExpr.Args = callExpr.Args[1:] // 删除第一个参数
+	var setStatusCodeInserted bool
 
+	for _, s := range blockStmt.List {
+		es, ok := s.(*ExprStmt)
+		if !ok {
+			continue
+		}
+		ce, ok := es.X.(*CallExpr)
+		if !ok {
+			continue
+		}
+		selExpr, ok := ce.Fun.(*SelectorExpr)
+		if !ok || selExpr.Sel == nil {
+			continue
+		}
+
+		// 检查是否已经插入了 c.SetStatusCode
+		if selExpr.Sel.Name == "SetStatusCode" {
+			setStatusCodeInserted = true
+			continue
+		}
+	}
 	newStmts := make([]Stmt, 0, len(blockStmt.List)*2)
 	newStmts = append(newStmts, blockStmt.List[:index]...)
-	newStmts = append(newStmts, &ExprStmt{
-		X: &CallExpr{
-			Fun: &SelectorExpr{
-				X:   NewIdent("c"),
-				Sel: NewIdent("SetStatusCode"),
+	if !setStatusCodeInserted {
+		newStmts = append(newStmts, &ExprStmt{
+			X: &CallExpr{
+				Fun: &SelectorExpr{
+					X:   NewIdent("c"),
+					Sel: NewIdent("SetStatusCode"),
+				},
+				Args: []Expr{&BasicLit{Kind: token.INT, Value: "200"}},
 			},
-			Args: []Expr{&BasicLit{Kind: token.INT, Value: "200"}},
-		},
-	})
+		})
+	}
 	newStmts = append(newStmts, &ExprStmt{X: callExpr})
 	blockStmt.List = newStmts
 }
