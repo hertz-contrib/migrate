@@ -1,6 +1,9 @@
 package utils
 
-import . "go/ast"
+import (
+	. "go/ast"
+	"regexp"
+)
 
 // CheckPtrStructName is a function used to check struc name
 // like r.FormFile, can check r *http.Request struct name is 'Request'
@@ -36,4 +39,10 @@ func CheckStructName(selExpr *SelectorExpr, name string) bool {
 		}
 	}
 	return false
+}
+
+func ReplaceParamsInStr(s string) string {
+	re := regexp.MustCompile(`\{([^}]+)\}`)
+	resultString := re.ReplaceAllString(s, ":$1")
+	return resultString
 }

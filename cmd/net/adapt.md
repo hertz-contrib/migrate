@@ -143,13 +143,13 @@ func newRouter() *server.Hertz {
 ```go
 // chi  
 r := chi.NewRouter()
-r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {
+r.Get("/ping/{id}", func(w http.ResponseWriter, r *http.Request) {
     w.Write([]byte("pong"))
 })
 
 // hertz
 r := server.Default()
-r.GET("/ping", func(ctx context.Context, c *app.RequestContext) {
+r.GET("/ping/:id", func(ctx context.Context, c *app.RequestContext) {
     c.String(200, "pong")
 })
 ```
@@ -157,12 +157,12 @@ r.GET("/ping", func(ctx context.Context, c *app.RequestContext) {
 ```go
 // chi
 r := chi.NewRouter()
-r.Method("GET", "/ping", func(w http.ResponseWriter, r *http.Request) {
+r.Method("GET", "/ping/{id}", func(w http.ResponseWriter, r *http.Request) {
     w.Write([]byte("pong"))
 })
 // hertz
 r := server.Default()
-r.Handle("GET", "/ping", func(ctx context.Context, c *app.RequestContext) {
+r.Handle("GET", "/ping/{id}", func(ctx context.Context, c *app.RequestContext) {
    c.Response.Write([]byte("pong"))
 })
 ```
