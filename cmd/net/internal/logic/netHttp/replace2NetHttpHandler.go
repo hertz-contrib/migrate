@@ -13,10 +13,108 @@ func Replace2NetHttpHandler(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 	oneWrapperLine(cur)
 	twoWrapperLine(cur)
 	inlineOneWrapperLine(cur)
+	//inFuncBody(cur)
 }
 
 func inlineOneWrapperLine(cur *astutil.Cursor) {
+	var (
+		rwIndex   = -1
+		rIndex    = -1
+		paramList []*Field
+	)
+	paramSet := mapset.NewSet[string]()
 	fieldList, ok := cur.Node().(*FieldList)
+	if !ok {
+		return
+	}
+	paramList = fieldList.List
+	for index, field := range paramList {
+		switch t := field.Type.(type) {
+		case *SelectorExpr:
+			if t.Sel.Name == "ResponseWriter" {
+				rwIndex = index
+				paramSet.Add(t.Sel.Name)
+			}
+		case *StarExpr:
+			selExpr, ok := t.X.(*SelectorExpr)
+			if ok {
+				if selExpr.Sel.Name == "Request" {
+					rIndex = index
+					paramSet.Add(selExpr.Sel.Name)
+				}
+			}
+		}
+	}
+
+	if len(paramList) == 2 && paramSet.Contains("ResponseWriter", "Request") {
+		ctx := &Field{
+			Names: []*Ident{NewIdent("ctx")},
+			Type:  NewIdent("context.Context"),
+		}
+		c := &Field{
+			Names: []*Ident{NewIdent("c")},
+			Type: &StarExpr{
+				X: &SelectorExpr{
+					X:   NewIdent("app"),
+					Sel: NewIdent("RequestContext"),
+				},
+			},
+		}
+		fields := []*Field{ctx, c}
+		paramList = fields
+		return
+	}
+
+	if len(paramList) > 2 && paramSet.Contains("ResponseWriter", "Request") {
+		var fields []*Field
+		fields = append(fields, paramList[:rwIndex]...)
+		fields = append(fields, &Field{
+			Names: []*Ident{NewIdent("c")},
+			Type: &StarExpr{
+				X: &SelectorExpr{
+					X:   NewIdent("app"),
+					Sel: NewIdent("RequestContext"),
+				},
+			},
+		})
+		fields = append(fields, paramList[rwIndex+2:]...)
+		paramList = fields
+		return
+	}
+
+	if paramSet.Contains("ResponseWriter") {
+		var fields []*Field
+		fields = append(fields, paramList[:rwIndex]...)
+		fields = append(fields, &Field{
+			Names: []*Ident{NewIdent("c")},
+			Type: &StarExpr{
+				X: &SelectorExpr{
+					X:   NewIdent("app"),
+					Sel: NewIdent("RequestContext"),
+				},
+			},
+		})
+		fields = append(fields, paramList[rwIndex+1:]...)
+		paramList = fields
+		return
+	}
+	if paramSet.Contains("Request") {
+		var fields []*Field
+		fields = append(fields, paramList[:rIndex]...)
+		fields = append(fields, &Field{
+			Names: []*Ident{NewIdent("c")},
+			Type: &StarExpr{
+				X: &SelectorExpr{
+					X:   NewIdent("app"),
+					Sel: NewIdent("RequestContext"),
+				},
+			},
+		})
+		fields = append(fields, paramList[rIndex+1:]...)
+		fieldList.List = fields
+		return
+	}
+
 	if !ok || len(fieldList.List) != 2 {
 		return
 	}

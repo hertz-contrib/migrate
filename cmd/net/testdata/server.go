@@ -1,33 +1,41 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
+	"strconv"
 )
 
-//func sayhelloName(w http.ResponseWriter, r *http.Request) {
-//	//r.Form.Get("s")
-//	//form := r.MultipartForm.Value
-//	//form2 := r.MultipartForm.File
-//	//w.Header().Add("s", "s")
-//	//w.Header().Del("s")
-//	//r.Header.Set("s", "s")
-//	//r.Header.Del("s")
-//	//get := r.URL.String()
-//	//uri := r.RequestURI()
-//	//file, fileHeader, err := r.FormFile("s")
-//	//m := r.Method
-//	//uri := r.RequestURI
-//	//host := r.Host
-//	//header := r.Header
-//	//w.Header()
-//	//r.Header.Del("s")
-//	//w.WriteHeader(200)
-//	//fmt.Fprintf(w, uri, m, host)
-//	//http.Error(w, "d", http.StatusInternalServerError)
-//	//http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-//	w.Write([]byte("Hello World!"))
-//}
+func sayhelloName(w http.ResponseWriter, r *http.Request) {
+	getId := func(r *http.Request, intr int) (int64, error) {
+		println(intr)
+		id, err := strconv.ParseInt(r.URL.Path[len("api/v1/books/"):], 10, 64)
+		if err != nil {
+			http.Error(w, "", http.StatusBadRequest)
+		}
+		return id, err
+	}
+	//r.Form.Get("s")
+	//form := r.MultipartForm.Value
+	//form2 := r.MultipartForm.File
+	//w.Header().Add("s", "s")
+	//w.Header().Del("s")
+	//r.Header.Set("s", "s")
+	//r.Header.Del("s")
+	//get := r.URL.String()
+	//uri := r.RequestURI()
+	//file, fileHeader, err := r.FormFile("s")
+	//m := r.Method
+	//uri := r.RequestURI
+	//host := r.Host
+	//header := r.Header
+	//w.Header()
+	//r.Header.Del("s")
+	//w.WriteHeader(200)
+	//fmt.Fprintf(w, uri, m, host)
+	//http.Error(w, "d", http.StatusInternalServerError)
+	//http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	//w.Write([]byte("Hello World!"))
+}
 
 //	func __sayhelloName() http.Handler {
 //		println()
@@ -35,13 +43,13 @@ import (
 //			w.Write([]byte("Hello World!"))
 //		})
 //	}
-func ___sayhelloName() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(400)
-		w.Write([]byte("Hello World!"))
-		fmt.Fprintf(w, "Hello World!")
-	}
-}
+//func ___sayhelloName() http.HandlerFunc {
+//	return func(w http.ResponseWriter, r *http.Request) {
+//		w.WriteHeader(400)
+//		w.Write([]byte("Hello World!"))
+//		fmt.Fprintf(w, "Hello World!")
+//	}
+//}
 
 //type Config struct {
 //	Addr string

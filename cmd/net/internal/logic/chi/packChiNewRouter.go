@@ -28,6 +28,7 @@ func PackChiNewRouter(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 		}
 		config.Map["server"] = stmt.Lhs[0].(*Ident).Name
 		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app/server")
+		astutil.DeleteImport(fset, file, "github.com/go-chi/chi/v5")
 		nethttp.AddOptionsForServer(callExpr, config.Map)
 	}
 }
