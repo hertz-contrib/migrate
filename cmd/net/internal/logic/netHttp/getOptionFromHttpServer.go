@@ -63,5 +63,5 @@ func processHttpServerOptions(block *BlockStmt, index int) {
 		}
 	}
 	// Remove the http.Server assignment statement
-	block.List = append(block.List[:index], block.List[index+1:]...)
+	//block.List = append(block.List[:index], block.List[index+1:]...)
 }

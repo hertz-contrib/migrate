@@ -45,11 +45,6 @@ func addParamInOption(pack, funcName, httpProp string, m map[string]any) *CallEx
 		case *SelectorExpr:
 			return addBasicParamForOptionFunc(pack, funcName, "1", token.INT)
 		}
-		//case "Handler":
-		//	switch v := value.(type) {
-		//	case *CallExpr:
-		//		return v
-		//	}
 	}
 
 	return nil

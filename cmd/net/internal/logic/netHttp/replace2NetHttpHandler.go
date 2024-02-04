@@ -13,7 +13,6 @@ func Replace2NetHttpHandler(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 	oneWrapperLine(cur)
 	twoWrapperLine(cur)
 	inlineOneWrapperLine(cur)
-	//inFuncBody(cur)
 }
 
 func inlineOneWrapperLine(cur *astutil.Cursor) {
