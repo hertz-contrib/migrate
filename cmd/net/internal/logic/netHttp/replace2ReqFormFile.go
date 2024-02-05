@@ -8,7 +8,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func Replace2ReqFormFile(cur *astutil.Cursor) {
+func ReplaceReqFormFile(cur *astutil.Cursor) {
 	stmt, ok := cur.Node().(*AssignStmt)
 	if !ok || len(stmt.Lhs) != 3 || len(stmt.Rhs) != 1 {
 		return

@@ -8,10 +8,10 @@ import (
 
 func main() {
 	h := server.Default(
-	//server.WithWriteTimeout(30),
+		server.WithWriteTimeout(30),
 	)
 	h.GET("/", _sayhelloName)
-	//h.Spin()
+	h.Spin()
 }
 
 func _sayhelloName(ctx context.Context, c *app.RequestContext) {

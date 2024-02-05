@@ -7,7 +7,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func Replace2HttpError(cur *astutil.Cursor) {
+func ReplaceHttpError(cur *astutil.Cursor) {
 	callExpr, ok := cur.Node().(*CallExpr)
 	if !ok {
 		return

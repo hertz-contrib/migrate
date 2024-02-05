@@ -6,7 +6,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func Replace2ReqHeaderOperation(cur *astutil.Cursor) {
+func ReplaceReqHeaderOperation(cur *astutil.Cursor) {
 	callExpr, ok := cur.Node().(*CallExpr)
 	if !ok {
 		return

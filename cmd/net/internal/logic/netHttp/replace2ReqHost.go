@@ -8,8 +8,8 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-// Replace2ReqHost replaces r.Host with string(c.Host)
-func Replace2ReqHost(cur *astutil.Cursor) {
+// ReplaceReqHost replaces r.Host with string(c.Host)
+func ReplaceReqHost(cur *astutil.Cursor) {
 	assignStmt, ok := cur.Node().(*AssignStmt)
 	if !ok || len(assignStmt.Rhs) != 1 {
 		return

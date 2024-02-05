@@ -10,7 +10,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func Replace2ReqMultipartFormOperation(cur *astutil.Cursor) {
+func ReplaceReqMultipartFormOperation(cur *astutil.Cursor) {
 	var (
 		fIndex     int
 		opFuncName string

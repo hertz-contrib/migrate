@@ -8,7 +8,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func Replace2ReqMultipartForm(cur *astutil.Cursor) {
+func ReplaceReqMultipartForm(cur *astutil.Cursor) {
 	stmt, ok := cur.Node().(*AssignStmt)
 	if !ok || len(stmt.Rhs) != 1 {
 		return

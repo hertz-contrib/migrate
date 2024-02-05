@@ -6,7 +6,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func Replace2RespWrite(cur *astutil.Cursor) {
+func ReplaceRespWrite(cur *astutil.Cursor) {
 	stmt, ok := cur.Node().(*BlockStmt)
 	if !ok || len(stmt.List) == 0 {
 		return

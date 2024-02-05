@@ -6,7 +6,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func Replace2ReqURLQuery(cur *astutil.Cursor) {
+func ReplaceReqURLQuery(cur *astutil.Cursor) {
 	callExpr, ok := cur.Node().(*CallExpr)
 	if !ok || len(callExpr.Args) != 1 {
 		return

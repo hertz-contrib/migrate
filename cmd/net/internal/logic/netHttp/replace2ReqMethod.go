@@ -8,7 +8,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func Replace2ReqMethod(cur *astutil.Cursor) {
+func ReplaceReqMethod(cur *astutil.Cursor) {
 	assignStmt, ok := cur.Node().(*AssignStmt)
 	if !ok {
 		return

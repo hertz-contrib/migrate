@@ -11,10 +11,12 @@ type Args struct {
 	TargetDir string
 	Filepath  string
 	PrintMode string
+	Debug     bool
 }
 
 func (a *Args) buildFlags() *flag.FlagSet {
 	fset := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+	fset.BoolVar(&a.Debug, "debug", false, "enable debug mode")
 	fset.StringVar(&a.TargetDir, "target-dir", "", "target directory")
 	fset.StringVar(&a.Filepath, "filepath", "./testdata/server.go", "file to translate")
 	fset.StringVar(&a.PrintMode, "print", "ast", "file to translate")

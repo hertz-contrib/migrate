@@ -6,7 +6,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func Replace2ReqURLString(cur *astutil.Cursor) {
+func ReplaceReqURLString(cur *astutil.Cursor) {
 	selExpr, ok := cur.Node().(*SelectorExpr)
 	if !ok || selExpr.Sel == nil || selExpr.Sel.Name != "String" {
 		return

@@ -2,20 +2,21 @@ package netHttp
 
 import (
 	. "go/ast"
+	"go/token"
 
 	mapset "github.com/deckarep/golang-set/v2"
 
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func Replace2NetHttpHandler(cur *astutil.Cursor, funcSet mapset.Set[string]) {
-	noWrapperLine(cur, funcSet)
-	oneWrapperLine(cur)
-	twoWrapperLine(cur)
-	inlineOneWrapperLine(cur)
+func ReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, file *File) {
+	noWrapperLine(cur, fset, file)
+	oneWrapperLine(cur, fset, file)
+	twoWrapperLine(cur, fset, file)
+	inlineOneWrapperLine(cur, fset, file)
 }
 
-func inlineOneWrapperLine(cur *astutil.Cursor) {
+func inlineOneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	var (
 		rwIndex   = -1
 		rIndex    = -1
@@ -44,6 +45,9 @@ func inlineOneWrapperLine(cur *astutil.Cursor) {
 			}
 		}
 	}
+	if paramSet.IsEmpty() {
+		return
+	}
 
 	if len(paramList) == 2 && paramSet.Contains("ResponseWriter", "Request") {
 		ctx := &Field{
@@ -60,7 +64,9 @@ func inlineOneWrapperLine(cur *astutil.Cursor) {
 			},
 		}
 		fields := []*Field{ctx, c}
-		paramList = fields
+		fieldList.List = fields
+		astutil.AddImport(fset, file, "context")
+		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 		return
 	}
 
@@ -78,6 +84,8 @@ func inlineOneWrapperLine(cur *astutil.Cursor) {
 		})
 		fields = append(fields, paramList[rwIndex+2:]...)
 		paramList = fields
+		astutil.AddImport(fset, file, "context")
+		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 		return
 	}
 
@@ -95,6 +103,7 @@ func inlineOneWrapperLine(cur *astutil.Cursor) {
 		})
 		fields = append(fields, paramList[rwIndex+1:]...)
 		paramList = fields
+		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 		return
 	}
 	if paramSet.Contains("Request") {
@@ -111,6 +120,7 @@ func inlineOneWrapperLine(cur *astutil.Cursor) {
 		})
 		fields = append(fields, paramList[rIndex+1:]...)
 		fieldList.List = fields
+		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 		return
 	}
 
@@ -140,9 +150,12 @@ func inlineOneWrapperLine(cur *astutil.Cursor) {
 	}
 	fields := []*Field{ctx, c}
 	fieldList.List = fields
+	astutil.AddImport(fset, file, "context")
+	astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
+
 }
 
-func twoWrapperLine(cur *astutil.Cursor) {
+func twoWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	var (
 		paramList []*Field
 	)
@@ -158,7 +171,6 @@ func twoWrapperLine(cur *astutil.Cursor) {
 	}
 	selExpr.X.(*Ident).Name = "app"
 	selExpr.Sel.Name = "HandlerFunc"
-
 	for _, stmt := range funcDecl.Body.List {
 		returnStmt, ok := stmt.(*ReturnStmt)
 		if !ok {
@@ -209,13 +221,13 @@ func twoWrapperLine(cur *astutil.Cursor) {
 			fields := []*Field{ctx, c}
 			funcLit.Type.Params.List = fields
 			returnStmt.Results = []Expr{funcLit}
-			return
+			astutil.AddImport(fset, file, "context")
+			astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 		}
-
 	}
 }
 
-func oneWrapperLine(cur *astutil.Cursor) {
+func oneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	var (
 		paramList []*Field
 	)
@@ -230,7 +242,6 @@ func oneWrapperLine(cur *astutil.Cursor) {
 		return
 	}
 	selExpr.X.(*Ident).Name = "app"
-
 	for _, stmt := range funcDecl.Body.List {
 		returnStmt, ok := stmt.(*ReturnStmt)
 		if !ok || len(returnStmt.Results) != 1 {
@@ -274,12 +285,14 @@ func oneWrapperLine(cur *astutil.Cursor) {
 			}
 			fields := []*Field{ctx, c}
 			funcLit.Type.Params.List = fields
+			astutil.AddImport(fset, file, "context")
+			astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 			return
 		}
 	}
 }
 
-func noWrapperLine(cur *astutil.Cursor, funcSet mapset.Set[string]) {
+func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	var (
 		rwIndex   = -1
 		rIndex    = -1
@@ -327,7 +340,8 @@ func noWrapperLine(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 		}
 		fields := []*Field{ctx, c}
 		funcType.Params.List = fields
-		funcSet.Add(funcDecl.Name.Name)
+		astutil.AddImport(fset, file, "context")
+		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 		return
 	}
 
@@ -345,7 +359,7 @@ func noWrapperLine(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 		})
 		fields = append(fields, paramList[rwIndex+2:]...)
 		funcType.Params.List = fields
-		funcSet.Add(funcDecl.Name.Name)
+		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 		return
 	}
 
@@ -363,7 +377,7 @@ func noWrapperLine(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 		})
 		fields = append(fields, paramList[rwIndex+1:]...)
 		funcType.Params.List = fields
-		funcSet.Add(funcDecl.Name.Name)
+		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 		return
 	}
 	if paramSet.Contains("Request") {
@@ -380,7 +394,7 @@ func noWrapperLine(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 		})
 		fields = append(fields, paramList[rIndex+1:]...)
 		paramList = fields
-		funcSet.Add(funcDecl.Name.Name)
+		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 		return
 	}
 }

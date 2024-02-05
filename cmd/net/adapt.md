@@ -24,6 +24,28 @@ func ping(ctx context.Context, c *app.RequestContext) {
 }
 
 server.Default().Any("/ping", ping)
+
+
+// 高级场景 
+// net/http
+
+func ping(w http.ResponseWriter, r *http.Request, data any) {
+    w.Header().Set("Content-Type", "application/json")
+	b, _ := json.Marshal(data)
+	w.Write(b)
+}
+
+ping(w, r, map[string]string{"msg": "pong"})
+
+// hertz
+func ping(c *app.RequestContext, data any) {
+    c.Response.Header.Set("Content-Type", "application/json")
+    b, _ := json.Marshal(data)
+	c.SetStatusCode(200)
+    c.Response.SetBody(b)
+}
+
+ping(c, map[string]string{"msg": "pong"})
 ```
 - req.Header -> c.Request.Header
 - file, fileHeader, err := r.FormFile("s") -> fileHeader, err := c.Request.FormFile("s")

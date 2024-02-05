@@ -8,7 +8,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func Replace2ReqHeader(cur *astutil.Cursor) {
+func ReplaceReqHeader(cur *astutil.Cursor) {
 	assignStmt, ok := cur.Node().(*AssignStmt)
 	if !ok || len(assignStmt.Rhs) != 1 {
 		return
