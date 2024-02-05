@@ -2,9 +2,8 @@ package args
 
 import (
 	"flag"
+	"log"
 	"os"
-
-	"github.com/hertz-contrib/migrate/cmd/net/internal/log"
 )
 
 type Args struct {
@@ -26,7 +25,7 @@ func (a *Args) buildFlags() *flag.FlagSet {
 func (a *Args) Parse() {
 	f := a.buildFlags()
 	if err := f.Parse(os.Args[1:]); err != nil {
-		log.Warn(os.Stderr, err)
+		log.Println(err)
 		os.Exit(2)
 	}
 }

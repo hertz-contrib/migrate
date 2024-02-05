@@ -13,9 +13,9 @@ func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]
 	}
 	funcInBodyList := blockStmt.List
 	for _, stmt := range funcInBodyList {
-		exprStmt, ok := stmt.(*ExprStmt)
-		if ok {
-			switch t := exprStmt.X.(type) {
+		switch st := stmt.(type) {
+		case *ExprStmt:
+			switch t := st.X.(type) {
 			case *CallExpr:
 				ident, ok := t.Fun.(*Ident)
 				if ok {
@@ -28,16 +28,26 @@ func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]
 					continue
 				}
 			}
-		}
-		ifStmt, ok := stmt.(*IfStmt)
-		if ok {
-			assignStmt, ok := ifStmt.Init.(*AssignStmt)
-			if !ok {
-				continue
+		case *IfStmt:
+			assignStmt, ok := st.Init.(*AssignStmt)
+			if ok {
+				if len(assignStmt.Rhs) == 1 {
+					callExpr, ok := assignStmt.Rhs[0].(*CallExpr)
+					if !ok {
+						continue
+					}
+					selExpr, ok := callExpr.Fun.(*SelectorExpr)
+					if ok {
+						replaceCallExprParams(funcSet, callExpr, selExpr.Sel.Name)
+						continue
+					}
+				}
 			}
-			if len(assignStmt.Rhs) == 1 {
-				callExpr, ok := assignStmt.Rhs[0].(*CallExpr)
-				if !ok {
+			callExpr, ok := st.Cond.(*CallExpr)
+			if ok {
+				ident, ok := callExpr.Fun.(*Ident)
+				if ok {
+					replaceCallExprParams(funcSet, callExpr, ident.Name)
 					continue
 				}
 				selExpr, ok := callExpr.Fun.(*SelectorExpr)
@@ -46,16 +56,96 @@ func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]
 					continue
 				}
 			}
+
+		case *SwitchStmt:
+			for _, s := range st.Body.List {
+				caseClause, ok := s.(*CaseClause)
+				if !ok {
+					continue
+				}
+				for _, _case := range caseClause.Body {
+					exprStmt, ok := _case.(*ExprStmt)
+					if ok {
+						callExpr, ok := exprStmt.X.(*CallExpr)
+						if ok {
+							continue
+						}
+						ident, ok := callExpr.Fun.(*Ident)
+						if ok {
+							replaceCallExprParams(funcSet, callExpr, ident.Name)
+							continue
+						}
+						selExpr, ok := callExpr.Fun.(*SelectorExpr)
+						if ok {
+							replaceCallExprParams(funcSet, callExpr, selExpr.Sel.Name)
+							continue
+						}
+						continue
+					}
+
+					ifStmt, ok := _case.(*IfStmt)
+					if ok {
+						assignStmt, ok := ifStmt.Init.(*AssignStmt)
+						if ok {
+							if len(assignStmt.Rhs) == 1 {
+								callExpr, ok := assignStmt.Rhs[0].(*CallExpr)
+								if !ok {
+									continue
+								}
+								switch cc := callExpr.Fun.(type) {
+								case *SelectorExpr:
+									replaceCallExprParams(funcSet, callExpr, cc.Sel.Name)
+									continue
+								case *Ident:
+									replaceCallExprParams(funcSet, callExpr, callExpr.Fun.(*Ident).Name)
+									continue
+								}
+							}
+						}
+
+						callExpr, ok := ifStmt.Cond.(*CallExpr)
+						if ok {
+							ident, ok := callExpr.Fun.(*Ident)
+							if ok {
+								replaceCallExprParams(funcSet, callExpr, ident.Name)
+								continue
+							}
+							selExpr, ok := callExpr.Fun.(*SelectorExpr)
+							if ok {
+								replaceCallExprParams(funcSet, callExpr, selExpr.Sel.Name)
+								continue
+							}
+						}
+					}
+				}
+			}
+		case *AssignStmt:
+			for _, rh := range st.Rhs {
+				ce, ok := rh.(*CallExpr)
+				if !ok {
+					continue
+				}
+				ident, ok := ce.Fun.(*Ident)
+				if ok {
+					replaceCallExprParams(funcSet, ce, ident.Name)
+					continue
+				}
+				selExpr, ok := ce.Fun.(*SelectorExpr)
+				if ok {
+					replaceCallExprParams(funcSet, ce, selExpr.Sel.Name)
+					continue
+				}
+			}
 		}
 	}
 }
 
 func replaceCallExprParams(funcSet map[string][2]int, callExpr *CallExpr, funcName string) {
-	_, ok := funcSet[funcName]
 	var (
 		rwIndex = -1
 		rIndex  = -1
 	)
+	_, ok := funcSet[funcName]
 	if ok {
 		for i, arg := range callExpr.Args {
 			indent, ok := arg.(*Ident)

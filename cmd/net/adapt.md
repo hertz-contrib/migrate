@@ -4,7 +4,7 @@ net/http 已经适配完成的 api:
 - func(w ResponseWriter, r *Request) -> func(ctx context.Context, c *app.RequestContext)
 ```go
 // net/http
-http.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
+http.HandleFunc("/ping", func (w http.ResponseWriter, r *http.Request) {
     w.Write([]byte("pong"))
 })
 
@@ -15,7 +15,7 @@ func ping(w http.ResponseWriter, r *http.Request) {
 http.HandleFunc("/ping", ping)
 
 // hertz
-server.Default().Any("/ping", func(ctx context.Context, c *app.RequestContext) {
+server.Default().Any("/ping", func (ctx context.Context, c *app.RequestContext) {
     c.Response.Write([]byte("pong"))
 })
 
@@ -25,35 +25,115 @@ func ping(ctx context.Context, c *app.RequestContext) {
 
 server.Default().Any("/ping", ping)
 
-
 // 高级场景 
 // net/http
 
 func ping(w http.ResponseWriter, r *http.Request, data any) {
     w.Header().Set("Content-Type", "application/json")
-	b, _ := json.Marshal(data)
-	w.Write(b)
+    b, _ := json.Marshal(data)
+    w.Write(b)
+}
+
+func ping2(w http.ResponseWriter, r *http.Request, data any) error{
+    w.Header().Set("Content-Type", "application/json")
+    b, _ := json.Marshal(data)
+    _, err := w.Write(b)
+	return err
 }
 
 ping(w, r, map[string]string{"msg": "pong"})
+if err := ping2(w, r, map[string]string{"msg": "pong"}); err != nil {
+    log.Println(err)
+}
 
 // hertz
 func ping(c *app.RequestContext, data any) {
     c.Response.Header.Set("Content-Type", "application/json")
     b, _ := json.Marshal(data)
-	c.SetStatusCode(200)
+    c.SetStatusCode(200)
+    c.Response.SetBody(b)
+}
+
+func ping2(c *app.RequestContext, data any) error {
+    w.Header().Set("Content-Type", "application/json")
+    b, _ := json.Marshal(data)
+    c.SetStatusCode(200)
     c.Response.SetBody(b)
 }
 
 ping(c, map[string]string{"msg": "pong"})
+if err := ping2(c, map[string]string{"msg": "pong"}); err != nil {
+    log.Println(err)
+}
+
 ```
 - req.Header -> c.Request.Header
 - file, fileHeader, err := r.FormFile("s") -> fileHeader, err := c.Request.FormFile("s")
 - req.Header.Get/Del -> c.Request.Header.Get/Del
 - req.Header.Set/Del -> c.Request.Header.Set/Del
-- req.Host -> string(c.Request.Host)
-- req.Method -> string(c.Request.Method)
+- req.Host -> string(c.Request.Host())
+```go
+// net/http
+func ping(w http.ResponseWriter, r *http.Request) {
+    host := r.Host
+	if r.Host == "localhost:8080" {
+		
+    }
+}
+
+// hertz
+func ping(ctx context.Context, c *app.RequestContext) {
+    host := string(c.Host())
+    if string(c.Host()) == "localhost:8080" {
+        
+    }
+}
+```
+
+- req.Method -> string(c.Method())
+```go
+// net/http
+func ping(w http.ResponseWriter, r *http.Request) {
+    if r.Method == "GET" {
+        w.Write([]byte("pong"))
+    }
+	
+	switch r.Method {
+  
+    }
+	
+	method := r.Method
+}
+
+// hertz
+func ping(ctx context.Context, c *app.RequestContext) {
+    if string(c.Method()) == "GET" {
+        c.Response.Write([]byte("pong"))
+    }
+	switch string(c.Method()) {
+  
+    }
+	method := string(c.Method())
+}
+```
 - req.RequestURI -> c.Request.URI().String()
+```go
+// net/http
+func ping(w http.ResponseWriter, r *http.Request) {
+    uri := r.RequestURI
+	if r.RequestURI == "/ping" {
+        
+    }
+}
+
+// hertz
+func ping(ctx context.Context, c *app.RequestContext) {
+    uri := c.Request.URI().String()
+	if string(c.Request.RequestURI()) == "/ping" {
+        
+    }
+}
+```
 - req.URL.String() -> c.URL.String()
 - req.URL.Query().Get -> c.Query
 - req.Form.Get() -> string(c.FormValue())

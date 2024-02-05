@@ -61,7 +61,7 @@ func beforeProcessFile(path string) {
 	}
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
-		nethttp.CollectMsg(c, funcSet, fset, file)
+		nethttp.CollectHandlerFuncName(c, funcSet)
 		return true
 	}, nil)
 }

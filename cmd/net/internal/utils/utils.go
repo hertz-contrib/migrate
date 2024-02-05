@@ -2,7 +2,9 @@ package utils
 
 import (
 	. "go/ast"
+	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 )
@@ -101,4 +103,12 @@ func CollectGoFiles(directory string) ([]string, error) {
 	})
 
 	return goFiles, err
+}
+
+func RunGoImports() {
+	cmd := exec.Command("go", "run", "-mod=mod", "golang.org/x/tools/cmd/goimports", "-w", ".")
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Println("[error]: goimports failed", string(out))
+	}
 }

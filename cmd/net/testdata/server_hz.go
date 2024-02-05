@@ -15,6 +15,10 @@ func main() {
 }
 
 func _sayhelloName(ctx context.Context, c *app.RequestContext) {
+	switch string(c.Method()) {
+	}
+	//if string(c.Method()) == "POST" {
+	//}
 	//form, err := c.MultipartForm()
 	//value := form.Value
 	//value := string(c.FormValue("name"))
