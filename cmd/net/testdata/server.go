@@ -1,9 +1,6 @@
 package main
 
-import (
-	"net/http"
-	"regexp"
-)
+import "net/http"
 
 //func sayhelloName(w http.ResponseWriter, r *http.Request) {
 //getId := func(r *http.Request, intr int) (int64, error) {
@@ -139,21 +136,18 @@ type Config struct {
 //		}
 //		return false
 //	}
-//
-// func writeProblemDetails(w http.ResponseWriter, r *http.Request, title string,
-//
-//		statusCode int, detail string) {
-//		w.WriteHeader(statusCode)
-//		w.Header().Set("Content-Type", "application/problem+json")
-//	}
-func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		m := regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$").
-			FindStringSubmatch(r.URL.Path)
-		if m == nil {
-			http.NotFound(w, r)
-			return
-		}
-		fn(w, r, m[2])
-	}
+func writeProblemDetails(w http.ResponseWriter, r *http.Request, title string, statusCode int, detail string) {
+	path := r.URL.Path
 }
+
+//func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
+//	return func(w http.ResponseWriter, r *http.Request) {
+//		m := regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$").
+//			FindStringSubmatch(r.URL.Path)
+//		if m == nil {
+//			http.NotFound(w, r)
+//			return
+//		}
+//		fn(w, r, m[2])
+//	}
+//}

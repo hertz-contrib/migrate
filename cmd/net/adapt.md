@@ -147,8 +147,9 @@ func ping(ctx context.Context, c *app.RequestContext) {
     }
 }
 ```
-- req.URL.String() -> c.URL.String()
-- req.URL.Query().Get -> c.Query
+- req.URL.String() -> c.URI().String()
+- req.URL.Path -> string(c.URI().Path())
+- req.URL.Query().Get -> c.Query()
 - req.Cookie -> c.Cookie
 ```go
 // net/http
