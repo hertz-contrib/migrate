@@ -125,8 +125,8 @@ func replaceCallExprParams(funcSet mapset.Set[string], callExpr *CallExpr, funcN
 
 		// r *http.Request and w http.ResponseWriter
 		if rIndex != -1 && rwIndex != -1 && len(callExpr.Args) == 2 {
-			callExpr.Args[rIndex].(*Ident).Name = "ctx"
-			callExpr.Args[rwIndex].(*Ident).Name = "c"
+			callExpr.Args[rwIndex].(*Ident).Name = "ctx"
+			callExpr.Args[rIndex].(*Ident).Name = "c"
 		}
 
 		// r *http.Request and w http.ResponseWriter

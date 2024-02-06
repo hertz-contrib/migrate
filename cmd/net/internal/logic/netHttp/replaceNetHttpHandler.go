@@ -1,6 +1,7 @@
 package netHttp
 
 import (
+	"github.com/hertz-contrib/migrate/cmd/net/internal/global"
 	. "go/ast"
 	"go/token"
 
@@ -80,7 +81,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 		fields := []*Field{ctx, c}
 		fieldList.List = fields
 		astutil.AddImport(fset, file, "context")
-		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
+		astutil.AddImport(fset, file, global.HzRepo+"/pkg/app")
 		return
 	}
 
@@ -103,7 +104,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 		fields = append(fields, paramList[rwIndex+2:]...)
 		fieldList.List = fields
 		astutil.AddImport(fset, file, "context")
-		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
+		astutil.AddImport(fset, file, global.HzRepo+"/pkg/app")
 		return
 	}
 
@@ -121,7 +122,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 		})
 		fields = append(fields, paramList[rwIndex+1:]...)
 		fieldList.List = fields
-		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
+		astutil.AddImport(fset, file, global.HzRepo+"/pkg/app")
 		return
 	}
 	if paramSet.Contains("Request") {
@@ -138,7 +139,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 		})
 		fields = append(fields, paramList[rIndex+1:]...)
 		fieldList.List = fields
-		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
+		astutil.AddImport(fset, file, global.HzRepo+"/pkg/app")
 		return
 	}
 
@@ -170,7 +171,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 	fields := []*Field{ctx, c}
 	fieldList.List = fields
 	astutil.AddImport(fset, file, "context")
-	astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
+	astutil.AddImport(fset, file, global.HzRepo+"/pkg/app")
 
 }
 
@@ -256,7 +257,7 @@ func twoWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 			funcLit.Type.Params.List = fields
 			returnStmt.Results = []Expr{funcLit}
 			astutil.AddImport(fset, file, "context")
-			astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
+			astutil.AddImport(fset, file, global.HzRepo+"/pkg/app")
 		}
 	}
 }
@@ -335,7 +336,7 @@ func oneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 			fields := []*Field{ctx, c}
 			funcLit.Type.Params.List = fields
 			astutil.AddImport(fset, file, "context")
-			astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
+			astutil.AddImport(fset, file, global.HzRepo+"/pkg/app")
 			return
 		}
 	}
@@ -401,7 +402,7 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 		fields := []*Field{ctx, c}
 		funcType.Params.List = fields
 		astutil.AddImport(fset, file, "context")
-		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
+		astutil.AddImport(fset, file, global.HzRepo+"/pkg/app")
 		return
 	}
 
@@ -423,7 +424,7 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 		})
 		fields = append(fields, paramList[rwIndex+2:]...)
 		funcType.Params.List = fields
-		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
+		astutil.AddImport(fset, file, global.HzRepo+"/pkg/app")
 		return
 	}
 
@@ -441,7 +442,7 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 		})
 		fields = append(fields, paramList[rwIndex+1:]...)
 		funcType.Params.List = fields
-		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
+		astutil.AddImport(fset, file, global.HzRepo+"/pkg/app")
 		return
 	}
 	if paramSet.Contains("Request") {
@@ -458,7 +459,7 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 		})
 		fields = append(fields, paramList[rIndex+1:]...)
 		funcType.Params.List = fields
-		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
+		astutil.AddImport(fset, file, global.HzRepo+"/pkg/app")
 		return
 	}
 }
