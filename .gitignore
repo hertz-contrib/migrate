@@ -27,6 +27,7 @@ output/*
 
 # Vscode files
 .vscode
+testdata
 
 
 __pycache__
