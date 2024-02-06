@@ -13,6 +13,7 @@ func ping(ctx context.Context, c *app.RequestContext) {
     c.Redirect(301, []byte("/pong"))
 }
 ```
+- http.NotFound -> c.NotFound
 - func(w ResponseWriter, r *Request) -> func(ctx context.Context, c *app.RequestContext)
 ```go
 // net/http
