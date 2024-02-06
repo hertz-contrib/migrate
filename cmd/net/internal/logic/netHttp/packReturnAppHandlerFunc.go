@@ -15,6 +15,9 @@ func packReturnStmt2AppHandlerFunc(cur *astutil.Cursor) {
 		return
 	}
 	funcType := funcDecl.Type
+	if funcType.Results == nil {
+		return
+	}
 	fields := funcType.Results.List
 	if len(fields) == 1 {
 		ft, ok := fields[0].Type.(*FuncType)
