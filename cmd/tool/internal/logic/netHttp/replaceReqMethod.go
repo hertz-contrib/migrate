@@ -18,7 +18,7 @@ import (
 	. "go/ast"
 	"sync"
 
-	"github.com/hertz-contrib/migrate/cmd/garbage/internal/utils"
+	"github.com/hertz-contrib/migrate/cmd/tool/internal/utils"
 
 	"golang.org/x/tools/go/ast/astutil"
 )

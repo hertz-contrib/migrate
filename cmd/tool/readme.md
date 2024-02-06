@@ -1,15 +1,15 @@
-## Garbage
+## Tool
 
 ### How to install
 
 ```bash
-go install github.com/hertz-contrib/migrate/cmd/garbage@latest
+go install github.com/hertz-contrib/migrate/cmd/tool@latest
 ```
 
 ### How to use
 
 ```bash
-go run main.go -target-dir ./haha
+tool -target-dir ./haha
 ```
 
 ### Warn

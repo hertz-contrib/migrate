@@ -12,41 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package netHttp
+package chi
 
 import (
+	"github.com/hertz-contrib/migrate/cmd/tool/internal/global"
+	nethttp "github.com/hertz-contrib/migrate/cmd/tool/internal/logic/netHttp"
 	. "go/ast"
-
-	"github.com/hertz-contrib/migrate/cmd/garbage/internal/utils"
-
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func ReplaceReqFormFile(cur *astutil.Cursor) {
+func PackChiNewRouter(cur *astutil.Cursor) {
 	stmt, ok := cur.Node().(*AssignStmt)
-	if !ok || len(stmt.Lhs) != 3 || len(stmt.Rhs) != 1 {
+	if !ok || len(stmt.Lhs) != 1 || len(stmt.Rhs) != 1 {
 		return
 	}
-
-	ce, ok := stmt.Rhs[0].(*CallExpr)
-	if !ok || len(ce.Args) != 1 {
+	callExpr, ok := stmt.Rhs[0].(*CallExpr)
+	if !ok {
 		return
 	}
-
-	selExpr, ok := ce.Fun.(*SelectorExpr)
-	if !ok || selExpr.Sel.Name != "FormFile" {
+	selExpr, ok := callExpr.Fun.(*SelectorExpr)
+	if !ok {
 		return
 	}
-
-	if utils.CheckPtrStructName(selExpr, "Request") {
-		se := &SelectorExpr{
-			X: &SelectorExpr{
-				X:   NewIdent("c"),
-				Sel: NewIdent("Request"),
-			},
-			Sel: NewIdent("FormFile"),
+	if selExpr.Sel.Name == "NewRouter" {
+		callExpr.Fun = &SelectorExpr{
+			X:   NewIdent("server"),
+			Sel: NewIdent("Default"),
 		}
-		ce.Fun = se
-		stmt.Lhs = stmt.Lhs[1:]
+		global.Map["server"] = stmt.Lhs[0].(*Ident).Name
+		nethttp.AddOptionsForServer(callExpr, global.Map)
 	}
 }

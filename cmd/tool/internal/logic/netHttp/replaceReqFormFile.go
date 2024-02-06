@@ -17,34 +17,36 @@ package netHttp
 import (
 	. "go/ast"
 
-	"github.com/hertz-contrib/migrate/cmd/garbage/internal/utils"
+	"github.com/hertz-contrib/migrate/cmd/tool/internal/utils"
+
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func ReplaceReqFormValue(cur *astutil.Cursor) {
-	callExpr, ok := cur.Node().(*CallExpr)
-	if !ok {
+func ReplaceReqFormFile(cur *astutil.Cursor) {
+	stmt, ok := cur.Node().(*AssignStmt)
+	if !ok || len(stmt.Lhs) != 3 || len(stmt.Rhs) != 1 {
 		return
 	}
-	selExpr, ok := callExpr.Fun.(*SelectorExpr)
-	if !ok || selExpr.Sel == nil {
+
+	ce, ok := stmt.Rhs[0].(*CallExpr)
+	if !ok || len(ce.Args) != 1 {
 		return
 	}
-	if selExpr.Sel.Name == "FormValue" {
-		if utils.CheckPtrStructName(selExpr, "Request") {
-			args := callExpr.Args
-			cur.Replace(&CallExpr{
-				Fun: NewIdent("string"),
-				Args: []Expr{
-					&CallExpr{
-						Fun: &SelectorExpr{
-							X:   NewIdent("c"),
-							Sel: NewIdent("FormValue"),
-						},
-						Args: args,
-					},
-				},
-			})
+
+	selExpr, ok := ce.Fun.(*SelectorExpr)
+	if !ok || selExpr.Sel.Name != "FormFile" {
+		return
+	}
+
+	if utils.CheckPtrStructName(selExpr, "Request") {
+		se := &SelectorExpr{
+			X: &SelectorExpr{
+				X:   NewIdent("c"),
+				Sel: NewIdent("Request"),
+			},
+			Sel: NewIdent("FormFile"),
 		}
+		ce.Fun = se
+		stmt.Lhs = stmt.Lhs[1:]
 	}
 }

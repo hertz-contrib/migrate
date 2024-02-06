@@ -12,34 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package chi
+package netHttp
 
 import (
-	"github.com/hertz-contrib/migrate/cmd/garbage/internal/global"
-	nethttp "github.com/hertz-contrib/migrate/cmd/garbage/internal/logic/netHttp"
 	. "go/ast"
+
+	"github.com/hertz-contrib/migrate/cmd/tool/internal/utils"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func PackChiNewRouter(cur *astutil.Cursor) {
-	stmt, ok := cur.Node().(*AssignStmt)
-	if !ok || len(stmt.Lhs) != 1 || len(stmt.Rhs) != 1 {
-		return
-	}
-	callExpr, ok := stmt.Rhs[0].(*CallExpr)
+func ReplaceReqFormValue(cur *astutil.Cursor) {
+	callExpr, ok := cur.Node().(*CallExpr)
 	if !ok {
 		return
 	}
 	selExpr, ok := callExpr.Fun.(*SelectorExpr)
-	if !ok {
+	if !ok || selExpr.Sel == nil {
 		return
 	}
-	if selExpr.Sel.Name == "NewRouter" {
-		callExpr.Fun = &SelectorExpr{
-			X:   NewIdent("server"),
-			Sel: NewIdent("Default"),
+	if selExpr.Sel.Name == "FormValue" {
+		if utils.CheckPtrStructName(selExpr, "Request") {
+			args := callExpr.Args
+			cur.Replace(&CallExpr{
+				Fun: NewIdent("string"),
+				Args: []Expr{
+					&CallExpr{
+						Fun: &SelectorExpr{
+							X:   NewIdent("c"),
+							Sel: NewIdent("FormValue"),
+						},
+						Args: args,
+					},
+				},
+			})
 		}
-		global.Map["server"] = stmt.Lhs[0].(*Ident).Name
-		nethttp.AddOptionsForServer(callExpr, global.Map)
 	}
 }

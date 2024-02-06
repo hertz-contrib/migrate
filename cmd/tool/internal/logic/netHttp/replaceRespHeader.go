@@ -17,31 +17,33 @@ package netHttp
 import (
 	. "go/ast"
 
-	"github.com/hertz-contrib/migrate/cmd/garbage/internal/utils"
+	"github.com/hertz-contrib/migrate/cmd/tool/internal/utils"
 
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func ReplaceReqHeader(cur *astutil.Cursor) {
-	assignStmt, ok := cur.Node().(*AssignStmt)
-	if !ok || len(assignStmt.Rhs) != 1 {
+func ReplaceRespHeader(cur *astutil.Cursor) {
+	callExpr, ok := cur.Node().(*CallExpr)
+	if !ok {
 		return
 	}
 
-	selExpr, ok := assignStmt.Rhs[0].(*SelectorExpr)
-	if !ok || selExpr.Sel.Name != "Header" {
+	selExpr, ok := callExpr.Fun.(*SelectorExpr)
+	if !ok || selExpr.Sel == nil {
 		return
 	}
 
-	if utils.CheckPtrStructName(selExpr, "Request") {
-		callExpr := &SelectorExpr{
-			X: &SelectorExpr{
-				X:   NewIdent("c"),
-				Sel: NewIdent("Request"),
-			},
-			Sel: NewIdent("Header"),
+	if selExpr.Sel.Name == "Header" {
+		if utils.CheckStructName(selExpr, "ResponseWriter") {
+			callExpr := &SelectorExpr{
+				X: &SelectorExpr{
+					X:   NewIdent("c"),
+					Sel: NewIdent("Response"),
+				},
+				Sel: NewIdent("Header"),
+			}
+			// Replace the right-hand side of the assignment statement
+			cur.Replace(callExpr)
 		}
-		// Replace the right-hand side of the assignment statement
-		assignStmt.Rhs[0] = callExpr
 	}
 }
