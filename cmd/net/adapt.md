@@ -1,6 +1,18 @@
 net/http 已经适配完成的 api:
 - srv.ListenAndServe -> h.Spin
 - http.NewServeMux -> server.Default
+- http.Redirect -> c.Redirect
+```go
+// net/http
+func ping(w http.ResponseWriter, r *http.Request) {
+    http.Redirect(w, r, "/pong", 301)
+}
+
+// hertz
+func ping(ctx context.Context, c *app.RequestContext) {
+    c.Redirect(301, []byte("/pong"))
+}
+```
 - func(w ResponseWriter, r *Request) -> func(ctx context.Context, c *app.RequestContext)
 ```go
 // net/http
@@ -151,6 +163,7 @@ func ping(ctx context.Context, c *app.RequestContext) {
 	form := _form.Value
 }
 ```
+- req.FormValue -> c.FormValue
 - http.HandlerFunc-> h.Any
 - resp.Header() -> c.Response.Header
 - resp.Header().Get/Del -> c.Response.Header.Get/Del

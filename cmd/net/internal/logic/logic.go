@@ -135,6 +135,7 @@ func netHttpGroup(c *astutil.Cursor, funcSet mapset.Set[string]) {
 		nethttp.PackFprintf,
 		nethttp.PackListenAndServe,
 		nethttp.ReplaceHttpError,
+		nethttp.ReplaceHttpRedirect,
 		nethttp.ReplaceRequestURI,
 		nethttp.ReplaceReqMethod,
 		nethttp.ReplaceReqHost,
@@ -146,6 +147,7 @@ func netHttpGroup(c *astutil.Cursor, funcSet mapset.Set[string]) {
 		nethttp.ReplaceReqURLString,
 		nethttp.ReplaceReqFormFile,
 		nethttp.ReplaceReqFormGet,
+		nethttp.ReplaceReqFormValue,
 		nethttp.ReplaceReqMultipartForm,
 		nethttp.ReplaceReqMultipartFormOperation,
 		func(c *astutil.Cursor) {

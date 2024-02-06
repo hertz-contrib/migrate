@@ -13,6 +13,9 @@ import (
 // like r.FormFile, can check r *http.Request struct name is 'Request'
 func CheckPtrStructName(selExpr *SelectorExpr, name string) bool {
 	if ident, ok := selExpr.X.(*Ident); ok {
+		if ident.Obj == nil {
+			return false
+		}
 		if field, ok := ident.Obj.Decl.(*Field); ok {
 			starExpr, ok := field.Type.(*StarExpr)
 			if !ok {
