@@ -1,11 +1,52 @@
 package netHttp
 
 import (
+	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 	. "go/ast"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
 func ReplaceReqURLPath(cur *astutil.Cursor) {
+	replaceBlockStmtReqURLPath(cur)
+	replaceExprStmtReqURLPath(cur)
+}
+
+func replaceExprStmtReqURLPath(cur *astutil.Cursor) {
+	callExpr, ok := cur.Node().(*CallExpr)
+	if !ok {
+		return
+	}
+	for i, arg := range callExpr.Args {
+		arg, ok := arg.(*SelectorExpr)
+		if !ok || arg.Sel.Name != "Path" {
+			continue
+		}
+		selExpr, ok := arg.X.(*SelectorExpr)
+		if !ok {
+			continue
+		}
+		if utils.CheckPtrStructName(selExpr, "Request") {
+			callExpr.Args[i] = &CallExpr{
+				Fun: &Ident{Name: "string"},
+				Args: []Expr{
+					&CallExpr{
+						Fun: &SelectorExpr{
+							X: &CallExpr{
+								Fun: &SelectorExpr{
+									X:   &Ident{Name: "c"},
+									Sel: &Ident{Name: "URI"},
+								},
+							},
+							Sel: &Ident{Name: "Path"},
+						},
+					},
+				},
+			}
+		}
+	}
+}
+
+func replaceBlockStmtReqURLPath(cur *astutil.Cursor) {
 	blockStmt, ok := cur.Node().(*BlockStmt)
 	if !ok {
 		return
@@ -41,5 +82,4 @@ func ReplaceReqURLPath(cur *astutil.Cursor) {
 			}
 		}
 	}
-
 }

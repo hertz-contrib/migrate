@@ -21,11 +21,11 @@ func CheckPtrStructName(selExpr *SelectorExpr, name string) bool {
 			if !ok {
 				return false
 			}
-			selExpr, ok := starExpr.X.(*SelectorExpr)
+			_selExpr, ok := starExpr.X.(*SelectorExpr)
 			if !ok {
 				return false
 			}
-			if selExpr.Sel.Name == name {
+			if _selExpr.Sel.Name == name {
 				return true
 			}
 		}

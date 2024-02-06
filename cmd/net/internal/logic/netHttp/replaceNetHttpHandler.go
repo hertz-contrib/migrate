@@ -35,7 +35,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 			if t.Sel.Name == "ResponseWriter" {
 				rwIndex = index
 				if field.Names == nil {
-					hasName = true
+					hasName = false
 				}
 				paramSet.Add(t.Sel.Name)
 			}
@@ -45,7 +45,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 				if selExpr.Sel.Name == "Request" {
 					rIndex = index
 					if field.Names == nil {
-						hasName = true
+						hasName = false
 					}
 					paramSet.Add(selExpr.Sel.Name)
 				}

@@ -2,6 +2,7 @@ package netHttp
 
 import (
 	mapset "github.com/deckarep/golang-set/v2"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 	. "go/ast"
 	"golang.org/x/tools/go/ast/astutil"
 )
@@ -9,6 +10,35 @@ import (
 func CollectHandlerFuncName(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 	collectTmpFuncName(cur, funcSet)
 	collectCommonFuncName(cur, funcSet)
+	collectExprStmtName(cur, funcSet)
+}
+
+func collectExprStmtName(cur *astutil.Cursor, mapSet mapset.Set[string]) {
+	var funcName string
+	exprStmt, ok := cur.Node().(*ExprStmt)
+	if !ok {
+		return
+	}
+	callExpr, ok := exprStmt.X.(*CallExpr)
+	if !ok {
+		return
+	}
+	ident, ok := callExpr.Fun.(*Ident)
+	if !ok {
+		return
+	}
+	funcName = ident.Name
+	for _, i := range callExpr.Args {
+		switch t := i.(type) {
+		case *Ident:
+			if utils.CheckStarProp(t, "Request") {
+				mapSet.Add(funcName)
+			}
+			if utils.CheckProp(t, "ResponseWriter") {
+				mapSet.Add(funcName)
+			}
+		}
+	}
 }
 
 func collectTmpFuncName(cur *astutil.Cursor, funcSet mapset.Set[string]) {
@@ -80,7 +110,6 @@ func collectCommonFuncName(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 			if ok {
 				if selExpr.Sel.Name == "Request" {
 					funcSet.Add(funcDecl.Name.Name)
-
 				}
 			}
 		}

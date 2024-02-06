@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"regexp"
+	"strings"
 )
 
 //func sayhelloName(w http.ResponseWriter, r *http.Request) {
@@ -139,9 +140,9 @@ type Config struct {
 //		}
 //		return false
 //	}
-func writeProblemDetails(w http.ResponseWriter, r *http.Request, title string, statusCode int, detail string) {
-	path := r.URL.Path
-}
+//func writeProblemDetails(w http.ResponseWriter, r *http.Request, title string, statusCode int, detail string) {
+//	path := r.URL.Path
+//}
 
 func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -151,6 +152,7 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 			http.NotFound(w, r)
 			return
 		}
+		strings.Clone(r.URL.Path)
 		fn(w, r, m[2])
 	}
 }
