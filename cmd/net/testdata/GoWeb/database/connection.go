@@ -1,0 +1,30 @@
+package database
+
+import (
+	"database/sql"
+	"fmt"
+	"github.com/hertz-contrib/migrate/cmd/net/testdata/GoWeb/app"
+	_ "github.com/lib/pq"
+	"log/slog"
+)
+
+// Connect returns a new database connection
+func Connect(app *app.App) *sql.DB {
+	postgresConfig := fmt.Sprintf("host=%s port=%s user=%s "+
+		"password=%s dbname=%s sslmode=disable",
+		app.Config.Db.Ip, app.Config.Db.Port, app.Config.Db.User, app.Config.Db.Password, app.Config.Db.Name)
+
+	db, err := sql.Open("postgres", postgresConfig)
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	slog.Info("connected to database successfully on " + app.Config.Db.Ip + ":" + app.Config.Db.Port + " using database " + app.Config.Db.Name)
+
+	return db
+}
