@@ -45,7 +45,7 @@ func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 		if !ok {
 			return
 		}
-		if selExpr.Sel.Name == "ServeMux" {
+		if selExpr.Sel.Name == "ServeMux" || selExpr.Sel.Name == "Mux" {
 			selExpr.X.(*Ident).Name = "server"
 			selExpr.Sel.Name = "Hertz"
 		}
