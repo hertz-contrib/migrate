@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"regexp"
 )
 
 //func sayhelloName(w http.ResponseWriter, r *http.Request) {
@@ -116,7 +117,6 @@ type Config struct {
 //	}
 //}
 
-//
 //	func f(w http.ResponseWriter, r *http.Request) {
 //		err := writeJSON(w, http.StatusCreated, envelope{"book": "book"})
 //	}
@@ -126,28 +126,34 @@ type Config struct {
 //		w.Header().Set("Content-Type", "application/json")
 //		return json.NewEncoder(w).Encode(data)
 //	}
-//func writeNotFoundOrBadRequestIfHasError(err error, w http.ResponseWriter, r *http.Request) bool {
-//	if err != nil {
-//		switch {
-//		case errors.Is(err, data.NotFoundError):
-//			writeProblemDetails(w, r, "Not Found", http.StatusNotFound, "matching book not found")
-//		default:
-//			writeProblemDetails(w, r, "server error", http.StatusInternalServerError, err.Error())
-//		}
-//		return true
-//	}
-//	return false
-//}
 //
-//func writeProblemDetails(w http.ResponseWriter, r *http.Request, title string,
-//	statusCode int, detail string) {
-//	w.WriteHeader(statusCode)
-//	w.Header().Set("Content-Type", "application/problem+json")
-//}
-
-func d() func(w http.ResponseWriter, r *http.Request) {
+//	func writeNotFoundOrBadRequestIfHasError(err error, w http.ResponseWriter, r *http.Request) bool {
+//		if err != nil {
+//			switch {
+//			case errors.Is(err, data.NotFoundError):
+//				writeProblemDetails(w, r, "Not Found", http.StatusNotFound, "matching book not found")
+//			default:
+//				writeProblemDetails(w, r, "server error", http.StatusInternalServerError, err.Error())
+//			}
+//			return true
+//		}
+//		return false
+//	}
+//
+// func writeProblemDetails(w http.ResponseWriter, r *http.Request, title string,
+//
+//		statusCode int, detail string) {
+//		w.WriteHeader(statusCode)
+//		w.Header().Set("Content-Type", "application/problem+json")
+//	}
+func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(400)
-		w.Write([]byte("Hello World!"))
+		m := regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$").
+			FindStringSubmatch(r.URL.Path)
+		if m == nil {
+			http.NotFound(w, r)
+			return
+		}
+		fn(w, r, m[2])
 	}
 }

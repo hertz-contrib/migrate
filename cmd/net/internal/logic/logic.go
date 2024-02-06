@@ -143,6 +143,7 @@ func netHttpGroup(c *astutil.Cursor, funcSet mapset.Set[string]) {
 		nethttp.ReplaceReqHeaderOperation,
 		nethttp.ReplaceRespHeader,
 		nethttp.ReplaceRespWrite,
+		nethttp.ReplaceRespNotFound,
 		nethttp.ReplaceReqURLQuery,
 		nethttp.ReplaceReqURLString,
 		nethttp.ReplaceReqCookie,

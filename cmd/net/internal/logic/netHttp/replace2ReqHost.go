@@ -11,6 +11,11 @@ import (
 func ReplaceReqHost(cur *astutil.Cursor) {
 	replaceAssignStmtReqHost(cur)
 	replaceIfStmtReqHost(cur)
+	replaceParamListReqHost(cur)
+}
+
+func replaceParamListReqHost(cur *astutil.Cursor) {
+
 }
 
 // replaceAssignStmtReqHost replaces r.Host with string(c.Host) in AssignStmt

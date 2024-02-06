@@ -108,7 +108,7 @@ func replaceCallExprParams(funcSet mapset.Set[string], callExpr *CallExpr, funcN
 				rIndex = i
 			}
 
-			if utils.CheckProps(indent, "ResponseWriter") {
+			if utils.CheckProp(indent, "ResponseWriter") {
 				rwIndex = i
 			}
 		}
@@ -130,8 +130,8 @@ func replaceCallExprParams(funcSet mapset.Set[string], callExpr *CallExpr, funcN
 
 		// r *http.Request and w http.ResponseWriter
 		if rIndex != -1 && rwIndex != -1 && len(callExpr.Args) > 2 {
-			callExpr.Args = append(callExpr.Args[:rwIndex], callExpr.Args[rwIndex+1:]...)
 			callExpr.Args[rwIndex].(*Ident).Name = "c"
+			callExpr.Args[rIndex].(*Ident).Name = "ctx"
 		}
 	}
 }

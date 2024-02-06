@@ -13,10 +13,10 @@ func ReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, file *File)
 	noWrapperLine(cur, fset, file)
 	oneWrapperLine(cur, fset, file)
 	twoWrapperLine(cur, fset, file)
-	inlineOneWrapperLine(cur, fset, file)
+	fieldListReplaceNetHttpHandler(cur, fset, file)
 }
 
-func inlineOneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
+func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	var (
 		rwIndex   = -1
 		rIndex    = -1
@@ -74,6 +74,10 @@ func inlineOneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) 
 		var fields []*Field
 		fields = append(fields, paramList[:rwIndex]...)
 		fields = append(fields, &Field{
+			Names: []*Ident{NewIdent("ctx")},
+			Type:  NewIdent("context.Context"),
+		})
+		fields = append(fields, &Field{
 			Names: []*Ident{NewIdent("c")},
 			Type: &StarExpr{
 				X: &SelectorExpr{
@@ -83,7 +87,7 @@ func inlineOneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) 
 			},
 		})
 		fields = append(fields, paramList[rwIndex+2:]...)
-		paramList = fields
+		fieldList.List = fields
 		astutil.AddImport(fset, file, "context")
 		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 		return
@@ -102,7 +106,7 @@ func inlineOneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) 
 			},
 		})
 		fields = append(fields, paramList[rwIndex+1:]...)
-		paramList = fields
+		fieldList.List = fields
 		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 		return
 	}
@@ -249,6 +253,9 @@ func oneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 		}
 
 		funcLit, ok := returnStmt.Results[0].(*FuncLit)
+		if !ok || funcLit.Type == nil || funcLit.Type.Params == nil {
+			return
+		}
 		paramList = funcLit.Type.Params.List
 		if !ok || len(paramList) != 2 {
 			return
@@ -349,6 +356,10 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 		var fields []*Field
 		fields = append(fields, paramList[:rwIndex]...)
 		fields = append(fields, &Field{
+			Names: []*Ident{NewIdent("ctx")},
+			Type:  NewIdent("context.Context"),
+		})
+		fields = append(fields, &Field{
 			Names: []*Ident{NewIdent("c")},
 			Type: &StarExpr{
 				X: &SelectorExpr{
@@ -393,7 +404,7 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 			},
 		})
 		fields = append(fields, paramList[rIndex+1:]...)
-		paramList = fields
+		funcType.Params.List = fields
 		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app")
 		return
 	}

@@ -42,5 +42,6 @@ func d() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		c.SetStatusCode(400)
 		c.Response.SetBody([]byte("Hello World!"))
+		c.NotFound()
 	}
 }

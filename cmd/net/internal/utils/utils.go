@@ -53,7 +53,7 @@ func CheckStarProp(ident *Ident, name string) bool {
 	return false
 }
 
-func CheckProps(ident *Ident, name string) bool {
+func CheckProp(ident *Ident, name string) bool {
 	if ident.Obj == nil || ident.Obj.Decl == nil {
 		return false
 	}
