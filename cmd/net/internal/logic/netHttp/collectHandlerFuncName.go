@@ -16,11 +16,10 @@ func collectTmpFuncName(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 		funcName  string
 		paramList []*Field
 	)
-	funcLit, ok := cur.Node().(*FuncLit)
+	blockStmt, ok := cur.Node().(*BlockStmt)
 	if !ok {
 		return
 	}
-	blockStmt := funcLit.Body
 
 	for _, stmt := range blockStmt.List {
 		as, ok := stmt.(*AssignStmt)
@@ -28,7 +27,11 @@ func collectTmpFuncName(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 			return
 		}
 		if len(as.Lhs) == 1 {
-			funcName = as.Lhs[0].(*Ident).Name
+			ident, ok := as.Lhs[0].(*Ident)
+			if !ok {
+				return
+			}
+			funcName = ident.Name
 		}
 		if len(as.Rhs) == 1 {
 			funcLit, ok := as.Rhs[0].(*FuncLit)
