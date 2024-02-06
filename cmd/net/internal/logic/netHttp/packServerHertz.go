@@ -20,7 +20,6 @@ func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 						return
 					}
 					if ident.Name == "http" && fun.Sel.Name == "NewServeMux" {
-						astutil.AddImport(fset, file, global.HzRepo+"/pkg/app/server")
 						callExpr.Fun.(*SelectorExpr).X.(*Ident).Name = "server"
 						callExpr.Fun.(*SelectorExpr).Sel.Name = "Default"
 						global.Map["server"] = assign.Lhs[0].(*Ident).Name

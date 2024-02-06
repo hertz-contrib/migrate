@@ -6,6 +6,10 @@ import (
 	"os"
 )
 
+var (
+	fset *flag.FlagSet
+)
+
 type Args struct {
 	TargetDir string
 	Filepath  string
@@ -15,12 +19,9 @@ type Args struct {
 }
 
 func (a *Args) buildFlags() *flag.FlagSet {
-	fset := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
-	fset.BoolVar(&a.Debug, "debug", false, "enable debug mode")
+	fset = flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+	fset.StringVar(&a.HzRepo, "hz-repo", "github.com/cloudwego/hertz", "")
 	fset.StringVar(&a.TargetDir, "target-dir", "", "target directory")
-	fset.StringVar(&a.Filepath, "filepath", "./testdata/server.go", "file to translate")
-	fset.StringVar(&a.HzRepo, "hzrepo", "github.com/cloudwego/hertz", "")
-	fset.StringVar(&a.PrintMode, "print", "ast", "file to translate")
 	return fset
 }
 

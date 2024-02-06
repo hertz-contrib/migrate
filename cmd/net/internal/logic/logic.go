@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sync"
 
 	"golang.org/x/tools/go/ast/astutil"
 
@@ -20,7 +21,11 @@ import (
 	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 )
 
-var funcSet mapset.Set[string]
+var (
+	funcSet   mapset.Set[string]
+	goModDirs []string
+	wg        sync.WaitGroup
+)
 
 func init() {
 	global.Map = make(map[string]interface{})
@@ -37,12 +42,24 @@ func Run(opt args.Args) {
 
 	if opt.TargetDir != "" {
 		gofiles, err := utils.CollectGoFiles(opt.TargetDir)
+		goModDirs = utils.SearchAllDirHasGoMod(opt.TargetDir)
+		for _, dir := range goModDirs {
+			wg.Add(1)
+			dir := dir
+			go func() {
+				defer wg.Done()
+				utils.RunGoGet(dir, opt.HzRepo)
+			}()
+		}
+		wg.Wait()
 		if err != nil {
 			log.Fatal(err)
 		}
 		beforeProcessFiles(gofiles)
 		processFiles(gofiles, opt.Debug)
-		utils.RunGoImports(opt.TargetDir)
+		for _, dir := range goModDirs {
+			utils.RunGoImports(dir)
+		}
 	}
 }
 
@@ -74,7 +91,10 @@ func beforeProcessFile(path string) {
 func processFile(path, printMode string, debug bool) {
 	var mode parser.Mode
 	fset := token.NewFileSet()
-	path, _ = filepath.Abs(path)
+	path, err := filepath.Abs(path)
+	if err != nil {
+		log.Fatal(err)
+	}
 	if debug {
 		mode = 0
 	} else {
@@ -117,7 +137,7 @@ func processAST(file *ast.File, fset *token.FileSet) {
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
 		nethttp.GetOptionsFromHttpServer(c)
 		nethttp.PackServerHertz(c, fset, file)
-		chi.PackChiMux(c, fset, file)
+		chi.PackChiMux(c)
 		nethttp.ReplaceNetHttpHandler(c, fset, file)
 		nethttp.PackSetStatusCode(c)
 		return true
@@ -132,6 +152,8 @@ func processAST(file *ast.File, fset *token.FileSet) {
 
 func chiGroup(c *astutil.Cursor) {
 	chi.PackChiRouterMethod(c)
+	chi.PackChiNewRouter(c)
+	chi.PackChiMux(c)
 }
 
 func netHttpGroup(c *astutil.Cursor, funcSet mapset.Set[string]) {

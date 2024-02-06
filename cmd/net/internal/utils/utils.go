@@ -1,10 +1,9 @@
 package utils
 
 import (
+	"fmt"
 	. "go/ast"
-	"log"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 )
@@ -92,12 +91,11 @@ func ReplaceParamsInStr(s string) string {
 
 func CollectGoFiles(directory string) ([]string, error) {
 	var goFiles []string
-
-	err := filepath.Walk(directory, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-
+	abs, err := filepath.Abs(directory)
+	if err != nil {
+		return nil, err
+	}
+	err = filepath.Walk(abs, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() && filepath.Ext(path) == ".go" {
 			goFiles = append(goFiles, path)
 		}
@@ -108,10 +106,23 @@ func CollectGoFiles(directory string) ([]string, error) {
 	return goFiles, err
 }
 
-func RunGoImports(path string) {
-	cmd := exec.Command("go", "run", "-mod=mod", "golang.org/x/tools/cmd/goimports", "-w", path)
-	out, err := cmd.CombinedOutput()
+func SearchAllDirHasGoMod(path string) (dirs []string) {
+	abs, err := filepath.Abs(path)
 	if err != nil {
-		log.Println("[error]: goimports failed", string(out))
+		fmt.Println("Error:", err)
+		return
 	}
+	err = filepath.Walk(abs, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() {
+			modFilePath := filepath.Join(path, "go.mod")
+			if _, err := os.Stat(modFilePath); err == nil {
+				dirs = append(dirs, path)
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+	return dirs
 }
