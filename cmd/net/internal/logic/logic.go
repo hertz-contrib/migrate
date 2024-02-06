@@ -2,6 +2,7 @@ package logic
 
 import (
 	"bytes"
+	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/hertz-contrib/migrate/cmd/net/internal/args"
 	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
 	"github.com/hertz-contrib/migrate/cmd/net/internal/logic/chi"
@@ -17,11 +18,11 @@ import (
 	"path/filepath"
 )
 
-var funcSet map[string][2]int
+var funcSet mapset.Set[string]
 
 func init() {
 	config.Map = make(map[string]interface{})
-	funcSet = make(map[string][2]int)
+	funcSet = mapset.NewSet[string]()
 }
 
 func Run(opt args.Args) {
@@ -128,7 +129,7 @@ func chiGroup(c *astutil.Cursor) {
 	chi.PackChiRouterMethod(c)
 }
 
-func netHttpGroup(c *astutil.Cursor, funcSet map[string][2]int) {
+func netHttpGroup(c *astutil.Cursor, funcSet mapset.Set[string]) {
 	funcsToProcess := []func(*astutil.Cursor){
 		nethttp.PackHandleFunc,
 		nethttp.PackFprintf,

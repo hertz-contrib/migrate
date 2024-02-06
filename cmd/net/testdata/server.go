@@ -1,10 +1,6 @@
 package main
 
-import (
-	"errors"
-	"github.com/hertz-contrib/migrate/cmd/net/testdata/internal/data"
-	"net/http"
-)
+import "net/http"
 
 //func sayhelloName(w http.ResponseWriter, r *http.Request) {
 //getId := func(r *http.Request, intr int) (int64, error) {
@@ -56,62 +52,69 @@ type Config struct {
 	Addr string
 }
 
-//func main() {
-//	svc := &Config{}
-//	mux := http.NewServeMux()
-//	//mux.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
-//	//if err := svc.wj(w, r, map[string]string{"hello": "world"}); err != nil {
-//	//	return
-//	//}
-//	//})
-//	mux.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
-//		getId := func(r *http.Request) (int64, error) {
-//			return 0, nil
-//		}
-//		switch "s" {
-//		case "s":
-//			if i, err := getId(r); err != nil {
-//				println(i)
-//			}
-//		}
-//		//if r.RequestURI == "localhost" {
-//		//
-//		//}
-//		//if r.RequestURI == "/api/v1/health" {
-//		//
-//		//}
-//		//if r.Method != http.MethodGet {
-//		//
-//		//}
-//		//method := r.Method
-//		//w.Write([]byte("Hello World!"))
-//		//expr := "s"
-//		//
-//		//switch expr {
-//		//case "S":
-//		//	svc.wj(w, r, map[string]string{"hello": "world"})
-//		//case "SS":
-//		//	svc.wj(w, r, map[string]string{"hello": "world"})
-//		//}
-//		//if expr == "S" {
-//		//if expr == "" {
-//		//	svc.wj(w, r, map[string]string{"hello": "world"})
-//		//}
-//		//if svc.wjbool(w, r, map[string]string{"hello": "world"}) {
-//		//	return
-//		//}
-//	})
-//	//cfg := &Config{
-//	//	Addr: "8080",
-//	//}
-//	//svr := http.Server{
-//	//	Addr:         cfg.Addr,
-//	//	IdleTimeout:  1 * time.Minute,
-//	//	ReadTimeout:  10 * time.Second,
-//	//	WriteTimeout: 30 * time.Second,
-//	//}
-//	//svr.ListenAndServe()
-//}
+func main() {
+	svc := &Config{}
+	mux := http.NewServeMux()
+	//mux.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
+	//if err := svc.wj(w, r, map[string]string{"hello": "world"}); err != nil {
+	//	return
+	//}
+	//})
+	mux.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
+		//getId := func(r *http.Request) (int64, error) {
+		//	return 0, nil
+		//}
+		//switch r.Method {
+		//case http.MethodGet:
+		//	if _, err := getId(r); err == nil {
+		//	}
+		//case http.MethodPut:
+		//	if _, err := getId(r); err == nil {
+		//	}
+		//case http.MethodDelete:
+		//	if _, err := getId(r); err == nil {
+		//	}
+		//default:
+		//	http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		//}
+		//if r.RequestURI == "localhost" {
+		//
+		//}
+		//if r.RequestURI == "/api/v1/health" {
+		//
+		//}
+		//if r.Method != http.MethodGet {
+		//
+		//}
+		//method := r.Method
+		//w.Write([]byte("Hello World!"))
+		//expr := "s"
+		//
+		//switch expr {
+		//case "S":
+		//	svc.wj(w, r, map[string]string{"hello": "world"})
+		//case "SS":
+		//	svc.wj(w, r, map[string]string{"hello": "world"})
+		//}
+		//if expr == "S" {
+		//if expr == "" {
+		//	svc.wj(w, r, map[string]string{"hello": "world"})
+		//}
+		//if svc.wjbool(w, r, map[string]string{"hello": "world"}) {
+		//	return
+		//}
+	})
+	//cfg := &Config{
+	//	Addr: "8080",
+	//}
+	//svr := http.Server{
+	//	Addr:         cfg.Addr,
+	//	IdleTimeout:  1 * time.Minute,
+	//	ReadTimeout:  10 * time.Second,
+	//	WriteTimeout: 30 * time.Second,
+	//}
+	//svr.ListenAndServe()
+}
 
 //func Route() *http.ServeMux {
 //	mux := http.NewServeMux()
@@ -129,13 +132,13 @@ type Config struct {
 //
 // return nil
 // }
-//
-//	func (svc *Config) wjbool(r *http.Request) (error, bool) {
-//		getId := func(r *http.Request) (int64, error) {
-//			return 0, nil
-//		}
-//		return nil, false
-//	}
+func (svc *Config) wjbool(r *http.Request) (error, bool) {
+	getId := func(r *http.Request) (int64, error) {
+		return 0, nil
+	}
+	return nil, false
+}
+
 //
 //	func f(w http.ResponseWriter, r *http.Request) {
 //		err := writeJSON(w, http.StatusCreated, envelope{"book": "book"})
@@ -146,21 +149,21 @@ type Config struct {
 //		w.Header().Set("Content-Type", "application/json")
 //		return json.NewEncoder(w).Encode(data)
 //	}
-func writeNotFoundOrBadRequestIfHasError(err error, w http.ResponseWriter, r *http.Request) bool {
-	if err != nil {
-		switch {
-		case errors.Is(err, data.NotFoundError):
-			writeProblemDetails(w, r, "Not Found", http.StatusNotFound, "matching book not found")
-		default:
-			writeProblemDetails(w, r, "server error", http.StatusInternalServerError, err.Error())
-		}
-		return true
-	}
-	return false
-}
-
-func writeProblemDetails(w http.ResponseWriter, r *http.Request, title string,
-	statusCode int, detail string) {
-	w.WriteHeader(statusCode)
-	w.Header().Set("Content-Type", "application/problem+json")
-}
+//func writeNotFoundOrBadRequestIfHasError(err error, w http.ResponseWriter, r *http.Request) bool {
+//	if err != nil {
+//		switch {
+//		case errors.Is(err, data.NotFoundError):
+//			writeProblemDetails(w, r, "Not Found", http.StatusNotFound, "matching book not found")
+//		default:
+//			writeProblemDetails(w, r, "server error", http.StatusInternalServerError, err.Error())
+//		}
+//		return true
+//	}
+//	return false
+//}
+//
+//func writeProblemDetails(w http.ResponseWriter, r *http.Request, title string,
+//	statusCode int, detail string) {
+//	w.WriteHeader(statusCode)
+//	w.Header().Set("Content-Type", "application/problem+json")
+//}

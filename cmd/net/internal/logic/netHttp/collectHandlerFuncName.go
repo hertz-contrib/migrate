@@ -1,16 +1,17 @@
 package netHttp
 
 import (
+	mapset "github.com/deckarep/golang-set/v2"
 	. "go/ast"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func CollectHandlerFuncName(cur *astutil.Cursor, funcSet map[string][2]int) {
+func CollectHandlerFuncName(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 	collectTmpFuncName(cur, funcSet)
 	collectCommonFuncName(cur, funcSet)
 }
 
-func collectTmpFuncName(cur *astutil.Cursor, funcSet map[string][2]int) {
+func collectTmpFuncName(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 	var (
 		funcName  string
 		paramList []*Field
@@ -39,13 +40,13 @@ func collectTmpFuncName(cur *astutil.Cursor, funcSet map[string][2]int) {
 				switch t := field.Type.(type) {
 				case *SelectorExpr:
 					if t.Sel.Name == "ResponseWriter" {
-						funcSet[funcName] = collectParamIndex(paramList)
+						funcSet.Add(funcName)
 					}
 				case *StarExpr:
 					selExpr, ok := t.X.(*SelectorExpr)
 					if ok {
 						if selExpr.Sel.Name == "Request" {
-							funcSet[funcName] = collectParamIndex(paramList)
+							funcSet.Add(funcName)
 						}
 					}
 				}
@@ -54,7 +55,7 @@ func collectTmpFuncName(cur *astutil.Cursor, funcSet map[string][2]int) {
 	}
 }
 
-func collectCommonFuncName(cur *astutil.Cursor, funcSet map[string][2]int) {
+func collectCommonFuncName(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 	var (
 		paramList []*Field
 	)
@@ -69,35 +70,16 @@ func collectCommonFuncName(cur *astutil.Cursor, funcSet map[string][2]int) {
 		switch t := field.Type.(type) {
 		case *SelectorExpr:
 			if t.Sel.Name == "ResponseWriter" {
-				funcSet[funcDecl.Name.Name] = collectParamIndex(funcType.Params.List)
+				funcSet.Add(funcDecl.Name.Name)
 			}
 		case *StarExpr:
 			selExpr, ok := t.X.(*SelectorExpr)
 			if ok {
 				if selExpr.Sel.Name == "Request" {
-					funcSet[funcDecl.Name.Name] = collectParamIndex(funcType.Params.List)
-				}
-			}
-		}
-	}
-}
+					funcSet.Add(funcDecl.Name.Name)
 
-func collectParamIndex(fields []*Field) [2]int {
-	var paramList [2]int
-	for index, f := range fields {
-		switch t := f.Type.(type) {
-		case *SelectorExpr:
-			if t.Sel.Name == "ResponseWriter" {
-				paramList[0] = index
-			}
-		case *StarExpr:
-			selExpr, ok := t.X.(*SelectorExpr)
-			if ok {
-				if selExpr.Sel.Name == "Request" {
-					paramList[1] = index
 				}
 			}
 		}
 	}
-	return paramList
 }

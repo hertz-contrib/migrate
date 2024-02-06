@@ -1,17 +1,38 @@
 package netHttp
 
 import (
+	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 	. "go/ast"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]int) {
+func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 	blockStmt, ok := cur.Node().(*BlockStmt)
 	if !ok {
 		return
 	}
 	funcInBodyList := blockStmt.List
+
+	ifStmtReplaceLogic := func(st *IfStmt) {
+		assignStmt, ok := st.Init.(*AssignStmt)
+		if ok {
+			if len(assignStmt.Rhs) == 1 {
+				callExpr, ok := assignStmt.Rhs[0].(*CallExpr)
+				if ok {
+					replaceCallExprParamsWithFuncName(funcSet, callExpr)
+					return
+				}
+
+			}
+		}
+		callExpr, ok := st.Cond.(*CallExpr)
+		if ok {
+			replaceCallExprParamsWithFuncName(funcSet, callExpr)
+			return
+		}
+	}
+
 	for _, stmt := range funcInBodyList {
 		switch st := stmt.(type) {
 		case *ExprStmt:
@@ -21,23 +42,8 @@ func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]
 				continue
 			}
 		case *IfStmt:
-			assignStmt, ok := st.Init.(*AssignStmt)
-			if ok {
-				if len(assignStmt.Rhs) == 1 {
-					callExpr, ok := assignStmt.Rhs[0].(*CallExpr)
-					if ok {
-						replaceCallExprParamsWithFuncName(funcSet, callExpr)
-						continue
-					}
-
-				}
-			}
-			callExpr, ok := st.Cond.(*CallExpr)
-			if ok {
-				replaceCallExprParamsWithFuncName(funcSet, callExpr)
-				continue
-			}
-
+			ifStmtReplaceLogic(st)
+			continue
 		case *SwitchStmt:
 			for _, s := range st.Body.List {
 				caseClause, ok := s.(*CaseClause)
@@ -56,22 +62,8 @@ func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]
 
 					ifStmt, ok := _case.(*IfStmt)
 					if ok {
-						assignStmt, ok := ifStmt.Init.(*AssignStmt)
-						if ok {
-							if len(assignStmt.Rhs) == 1 {
-								callExpr, ok := assignStmt.Rhs[0].(*CallExpr)
-								if ok {
-									replaceCallExprParamsWithFuncName(funcSet, callExpr)
-									continue
-								}
-							}
-						}
-
-						callExpr, ok := ifStmt.Cond.(*CallExpr)
-						if ok {
-							replaceCallExprParamsWithFuncName(funcSet, callExpr)
-							continue
-						}
+						ifStmtReplaceLogic(ifStmt)
+						continue
 					}
 				}
 			}
@@ -87,7 +79,7 @@ func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]
 	}
 }
 
-func replaceCallExprParamsWithFuncName(funcSet map[string][2]int, callExpr *CallExpr) {
+func replaceCallExprParamsWithFuncName(funcSet mapset.Set[string], callExpr *CallExpr) {
 	ident, ok := callExpr.Fun.(*Ident)
 	if ok {
 		replaceCallExprParams(funcSet, callExpr, ident.Name)
@@ -100,12 +92,12 @@ func replaceCallExprParamsWithFuncName(funcSet map[string][2]int, callExpr *Call
 	}
 }
 
-func replaceCallExprParams(funcSet map[string][2]int, callExpr *CallExpr, funcName string) {
+func replaceCallExprParams(funcSet mapset.Set[string], callExpr *CallExpr, funcName string) {
 	var (
 		rwIndex = -1
 		rIndex  = -1
 	)
-	_, ok := funcSet[funcName]
+	ok := funcSet.Contains(funcName)
 	if ok {
 		for i, arg := range callExpr.Args {
 			indent, ok := arg.(*Ident)
