@@ -113,7 +113,7 @@ func processAST(file *ast.File, fset *token.FileSet) {
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
 		nethttp.GetOptionsFromHttpServer(c)
 		nethttp.PackServerHertz(c, fset, file)
-		nethttp.ReplaceNetHttpHandler(c, fset, file)
+		//nethttp.ReplaceNetHttpHandler(c, fset, file)
 		nethttp.PackSetStatusCode(c)
 		return true
 	}, nil)

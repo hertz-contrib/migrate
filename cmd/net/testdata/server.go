@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"net/http"
+	"regexp"
+)
 
 //func sayhelloName(w http.ResponseWriter, r *http.Request) {
 //getId := func(r *http.Request, intr int) (int64, error) {
@@ -140,14 +143,14 @@ func writeProblemDetails(w http.ResponseWriter, r *http.Request, title string, s
 	path := r.URL.Path
 }
 
-//func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
-//	return func(w http.ResponseWriter, r *http.Request) {
-//		m := regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$").
-//			FindStringSubmatch(r.URL.Path)
-//		if m == nil {
-//			http.NotFound(w, r)
-//			return
-//		}
-//		fn(w, r, m[2])
-//	}
-//}
+func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		m := regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9]+)$").
+			FindStringSubmatch(r.URL.Path)
+		if m == nil {
+			http.NotFound(w, r)
+			return
+		}
+		fn(w, r, m[2])
+	}
+}

@@ -21,6 +21,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 		rwIndex   = -1
 		rIndex    = -1
 		paramList []*Field
+		hasName   = true
 	)
 	paramSet := mapset.NewSet[string]()
 	fieldList, ok := cur.Node().(*FieldList)
@@ -33,6 +34,9 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 		case *SelectorExpr:
 			if t.Sel.Name == "ResponseWriter" {
 				rwIndex = index
+				if field.Names == nil {
+					hasName = true
+				}
 				paramSet.Add(t.Sel.Name)
 			}
 		case *StarExpr:
@@ -40,6 +44,9 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 			if ok {
 				if selExpr.Sel.Name == "Request" {
 					rIndex = index
+					if field.Names == nil {
+						hasName = true
+					}
 					paramSet.Add(selExpr.Sel.Name)
 				}
 			}
@@ -49,13 +56,20 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 		return
 	}
 
+	ctxName := []*Ident{NewIdent("ctx")}
+	cName := []*Ident{NewIdent("c")}
+	if !hasName {
+		ctxName = nil
+		cName = nil
+	}
+
 	if len(paramList) == 2 && paramSet.Contains("ResponseWriter", "Request") {
 		ctx := &Field{
-			Names: []*Ident{NewIdent("ctx")},
+			Names: ctxName,
 			Type:  NewIdent("context.Context"),
 		}
 		c := &Field{
-			Names: []*Ident{NewIdent("c")},
+			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
 					X:   NewIdent("app"),
@@ -74,11 +88,11 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 		var fields []*Field
 		fields = append(fields, paramList[:rwIndex]...)
 		fields = append(fields, &Field{
-			Names: []*Ident{NewIdent("ctx")},
+			Names: ctxName,
 			Type:  NewIdent("context.Context"),
 		})
 		fields = append(fields, &Field{
-			Names: []*Ident{NewIdent("c")},
+			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
 					X:   NewIdent("app"),
@@ -97,7 +111,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 		var fields []*Field
 		fields = append(fields, paramList[:rwIndex]...)
 		fields = append(fields, &Field{
-			Names: []*Ident{NewIdent("c")},
+			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
 					X:   NewIdent("app"),
@@ -114,7 +128,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 		var fields []*Field
 		fields = append(fields, paramList[:rIndex]...)
 		fields = append(fields, &Field{
-			Names: []*Ident{NewIdent("c")},
+			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
 					X:   NewIdent("app"),
@@ -139,12 +153,13 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 	if !ok || starExpr.X.(*SelectorExpr).Sel.Name != "Request" {
 		return
 	}
+
 	ctx := &Field{
-		Names: []*Ident{NewIdent("ctx")},
+		Names: ctxName,
 		Type:  NewIdent("context.Context"),
 	}
 	c := &Field{
-		Names: []*Ident{NewIdent("c")},
+		Names: cName,
 		Type: &StarExpr{
 			X: &SelectorExpr{
 				X:   NewIdent("app"),
@@ -162,6 +177,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 func twoWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	var (
 		paramList []*Field
+		hasName   = true
 	)
 	paramSet := mapset.NewSet[string]()
 
@@ -175,6 +191,7 @@ func twoWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	}
 	selExpr.X.(*Ident).Name = "app"
 	selExpr.Sel.Name = "HandlerFunc"
+
 	for _, stmt := range funcDecl.Body.List {
 		returnStmt, ok := stmt.(*ReturnStmt)
 		if !ok {
@@ -196,25 +213,38 @@ func twoWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 			switch t := field.Type.(type) {
 			case *SelectorExpr:
 				if t.Sel.Name == "ResponseWriter" {
+					if field.Names == nil {
+						hasName = false
+					}
 					paramSet.Add(t.Sel.Name)
 				}
 			case *StarExpr:
 				selExpr, ok := t.X.(*SelectorExpr)
 				if ok {
 					if selExpr.Sel.Name == "Request" {
+						if field.Names == nil {
+							hasName = false
+						}
 						paramSet.Add(selExpr.Sel.Name)
 					}
 				}
 			}
 		}
 
+		ctxName := []*Ident{NewIdent("ctx")}
+		cName := []*Ident{NewIdent("c")}
+		if !hasName {
+			ctxName = nil
+			cName = nil
+		}
+
 		if paramSet.Contains("ResponseWriter", "Request") {
 			ctx := &Field{
-				Names: []*Ident{NewIdent("ctx")},
+				Names: ctxName,
 				Type:  NewIdent("context.Context"),
 			}
 			c := &Field{
-				Names: []*Ident{NewIdent("c")},
+				Names: cName,
 				Type: &StarExpr{
 					X: &SelectorExpr{
 						X:   NewIdent("app"),
@@ -234,6 +264,7 @@ func twoWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 func oneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	var (
 		paramList []*Field
+		hasName   = true
 	)
 	paramSet := mapset.NewSet[string]()
 
@@ -264,25 +295,36 @@ func oneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 			switch t := field.Type.(type) {
 			case *SelectorExpr:
 				if t.Sel.Name == "ResponseWriter" {
+					if field.Names == nil {
+						hasName = false
+					}
 					paramSet.Add(t.Sel.Name)
 				}
 			case *StarExpr:
 				selExpr, ok := t.X.(*SelectorExpr)
 				if ok {
 					if selExpr.Sel.Name == "Request" {
+						if field.Names == nil {
+							hasName = false
+						}
 						paramSet.Add(selExpr.Sel.Name)
 					}
 				}
 			}
 		}
-
+		ctxName := []*Ident{NewIdent("ctx")}
+		cName := []*Ident{NewIdent("c")}
+		if !hasName {
+			ctxName = nil
+			cName = nil
+		}
 		if paramSet.Contains("ResponseWriter", "Request") {
 			ctx := &Field{
-				Names: []*Ident{NewIdent("ctx")},
+				Names: ctxName,
 				Type:  NewIdent("context.Context"),
 			}
 			c := &Field{
-				Names: []*Ident{NewIdent("c")},
+				Names: cName,
 				Type: &StarExpr{
 					X: &SelectorExpr{
 						X:   NewIdent("app"),
@@ -303,6 +345,7 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	var (
 		rwIndex   = -1
 		rIndex    = -1
+		hasName   = true
 		paramList []*Field
 	)
 	paramSet := mapset.NewSet[string]()
@@ -318,7 +361,9 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 			if t.Sel.Name == "ResponseWriter" {
 				rwIndex = index
 				paramSet.Add(t.Sel.Name)
-
+				if field.Names == nil {
+					hasName = false
+				}
 			}
 		case *StarExpr:
 			selExpr, ok := t.X.(*SelectorExpr)
@@ -326,18 +371,26 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 				if selExpr.Sel.Name == "Request" {
 					rIndex = index
 					paramSet.Add(selExpr.Sel.Name)
+					if field.Names == nil {
+						hasName = false
+					}
 				}
 			}
 		}
 	}
-
+	ctxName := []*Ident{NewIdent("ctx")}
+	cName := []*Ident{NewIdent("c")}
+	if !hasName {
+		ctxName = nil
+		cName = nil
+	}
 	if len(paramList) == 2 && paramSet.Contains("ResponseWriter", "Request") {
 		ctx := &Field{
-			Names: []*Ident{NewIdent("ctx")},
+			Names: ctxName,
 			Type:  NewIdent("context.Context"),
 		}
 		c := &Field{
-			Names: []*Ident{NewIdent("c")},
+			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
 					X:   NewIdent("app"),
@@ -356,11 +409,11 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 		var fields []*Field
 		fields = append(fields, paramList[:rwIndex]...)
 		fields = append(fields, &Field{
-			Names: []*Ident{NewIdent("ctx")},
+			Names: ctxName,
 			Type:  NewIdent("context.Context"),
 		})
 		fields = append(fields, &Field{
-			Names: []*Ident{NewIdent("c")},
+			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
 					X:   NewIdent("app"),
@@ -378,7 +431,7 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 		var fields []*Field
 		fields = append(fields, paramList[:rwIndex]...)
 		fields = append(fields, &Field{
-			Names: []*Ident{NewIdent("c")},
+			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
 					X:   NewIdent("app"),
@@ -395,7 +448,7 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 		var fields []*Field
 		fields = append(fields, paramList[:rIndex]...)
 		fields = append(fields, &Field{
-			Names: []*Ident{NewIdent("c")},
+			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
 					X:   NewIdent("app"),
