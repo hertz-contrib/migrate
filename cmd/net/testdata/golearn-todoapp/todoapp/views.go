@@ -2,9 +2,7 @@ package todoapp
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"net/http"
-	"strconv"
 	"time"
 )
 
@@ -66,25 +64,6 @@ func CreateEntry(response http.ResponseWriter, request *http.Request) {
 	} else {
 		// The form was successfully submitted,
 		// redirect the user to the index
-		http.Redirect(response, request, "/", http.StatusFound)
-	}
-}
-
-func DeleteEntry(response http.ResponseWriter, request *http.Request) {
-	vars := mux.Vars(request)
-	request.
-		id, err := strconv.Atoi(vars["id"])
-
-	if err != nil {
-		response.WriteHeader(http.StatusBadRequest)
-		_, _ = response.Write([]byte("Invalid parameter: id."))
-	}
-
-	if id >= len(SavedEntries) {
-		response.WriteHeader(http.StatusNotFound)
-		_, _ = response.Write([]byte("No such entry."))
-	} else {
-		SavedEntries[id] = nil
 		http.Redirect(response, request, "/", http.StatusFound)
 	}
 }

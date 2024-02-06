@@ -2,30 +2,33 @@ package logic
 
 import (
 	"bytes"
-	mapset "github.com/deckarep/golang-set/v2"
-	"github.com/hertz-contrib/migrate/cmd/net/internal/args"
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
-	"github.com/hertz-contrib/migrate/cmd/net/internal/logic/chi"
-	nethttp "github.com/hertz-contrib/migrate/cmd/net/internal/logic/netHttp"
-	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 	"go/ast"
 	"go/parser"
 	"go/printer"
 	"go/token"
-	"golang.org/x/tools/go/ast/astutil"
 	"log"
 	"os"
 	"path/filepath"
+
+	"golang.org/x/tools/go/ast/astutil"
+
+	mapset "github.com/deckarep/golang-set/v2"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/args"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/global"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/logic/chi"
+	nethttp "github.com/hertz-contrib/migrate/cmd/net/internal/logic/netHttp"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 )
 
 var funcSet mapset.Set[string]
 
 func init() {
-	config.Map = make(map[string]interface{})
+	global.Map = make(map[string]interface{})
 	funcSet = mapset.NewSet[string]()
 }
 
 func Run(opt args.Args) {
+	global.HzRepo = opt.HzRepo
 	if opt.Debug {
 		beforeProcessFile(opt.Filepath)
 		processFile(opt.Filepath, opt.PrintMode, opt.Debug)
@@ -39,6 +42,7 @@ func Run(opt args.Args) {
 		}
 		beforeProcessFiles(gofiles)
 		processFiles(gofiles, opt.Debug)
+		utils.RunGoImports(opt.TargetDir)
 	}
 }
 
@@ -113,6 +117,7 @@ func processAST(file *ast.File, fset *token.FileSet) {
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
 		nethttp.GetOptionsFromHttpServer(c)
 		nethttp.PackServerHertz(c, fset, file)
+		chi.PackChiMux(c, fset, file)
 		nethttp.ReplaceNetHttpHandler(c, fset, file)
 		nethttp.PackSetStatusCode(c)
 		return true

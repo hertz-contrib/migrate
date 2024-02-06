@@ -108,8 +108,8 @@ func CollectGoFiles(directory string) ([]string, error) {
 	return goFiles, err
 }
 
-func RunGoImports() {
-	cmd := exec.Command("go", "run", "-mod=mod", "golang.org/x/tools/cmd/goimports", "-w", ".")
+func RunGoImports(path string) {
+	cmd := exec.Command("go", "run", "-mod=mod", "golang.org/x/tools/cmd/goimports", "-w", path)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Println("[error]: goimports failed", string(out))

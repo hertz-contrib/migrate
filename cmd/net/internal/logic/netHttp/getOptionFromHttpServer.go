@@ -3,7 +3,7 @@ package netHttp
 import (
 	. "go/ast"
 
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/global"
 
 	"golang.org/x/tools/go/ast/astutil"
 )
@@ -59,7 +59,7 @@ func processHttpServerOptions(block *BlockStmt, index int) {
 	for _, elt := range compLit.Elts {
 		if kvExpr, ok := elt.(*KeyValueExpr); ok {
 			key := kvExpr.Key.(*Ident).Name
-			config.Map[key] = kvExpr.Value
+			global.Map[key] = kvExpr.Value
 		}
 	}
 	// Remove the http.Server assignment statement

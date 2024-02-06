@@ -1,9 +1,10 @@
 package netHttp
 
 import (
+	. "go/ast"
+
 	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
-	. "go/ast"
 	"golang.org/x/tools/go/ast/astutil"
 )
 

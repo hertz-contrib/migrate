@@ -16,20 +16,21 @@ func ReplaceReqFormGet(cur *astutil.Cursor) {
 		return
 	}
 	if selExpr.Sel.Name == "Get" {
-		selectExpr, ok := selExpr.X.(*SelectorExpr)
-		if !ok || selectExpr.Sel.Name != "Form" {
+		se, ok := selExpr.X.(*SelectorExpr)
+		if !ok {
 			return
 		}
-
-		callExpr.Fun = NewIdent("string")
-		callExpr.Args = []Expr{
-			&CallExpr{
-				Fun: &SelectorExpr{
-					X:   NewIdent("c"),
-					Sel: NewIdent("FormValue"),
+		if se.Sel.Name == "Form" || se.Sel.Name == "PostForm" {
+			callExpr.Fun = NewIdent("string")
+			callExpr.Args = []Expr{
+				&CallExpr{
+					Fun: &SelectorExpr{
+						X:   NewIdent("c"),
+						Sel: NewIdent("FormValue"),
+					},
+					Args: callExpr.Args,
 				},
-				Args: callExpr.Args,
-			},
+			}
 		}
 	}
 }

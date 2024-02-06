@@ -7,5 +7,4 @@ import (
 func SetupRoutes(routes *chi.Mux) {
 	routes.HandleFunc("/", IndexView)
 	routes.HandleFunc("/create", CreateEntry)
-	routes.Post("/{id}/delete", DeleteEntry)
 }

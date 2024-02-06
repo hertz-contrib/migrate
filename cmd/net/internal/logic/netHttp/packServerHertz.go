@@ -4,7 +4,7 @@ import (
 	. "go/ast"
 	"go/token"
 
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/global"
 
 	"golang.org/x/tools/go/ast/astutil"
 )
@@ -20,11 +20,11 @@ func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 						return
 					}
 					if ident.Name == "http" && fun.Sel.Name == "NewServeMux" {
-						astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app/server")
+						astutil.AddImport(fset, file, global.HzRepo+"/pkg/app/server")
 						callExpr.Fun.(*SelectorExpr).X.(*Ident).Name = "server"
 						callExpr.Fun.(*SelectorExpr).Sel.Name = "Default"
-						config.Map["server"] = assign.Lhs[0].(*Ident).Name
-						AddOptionsForServer(callExpr, config.Map)
+						global.Map["server"] = assign.Lhs[0].(*Ident).Name
+						AddOptionsForServer(callExpr, global.Map)
 					}
 				}
 			}

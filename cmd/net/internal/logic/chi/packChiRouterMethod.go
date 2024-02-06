@@ -1,9 +1,10 @@
 package chi
 
 import (
-	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 	. "go/ast"
 	"go/token"
+
+	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 	"golang.org/x/tools/go/ast/astutil"
 )
 

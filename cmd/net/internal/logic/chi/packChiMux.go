@@ -3,6 +3,8 @@ package chi
 import (
 	. "go/ast"
 	"go/token"
+
+	"github.com/hertz-contrib/migrate/cmd/net/internal/global"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
@@ -24,7 +26,7 @@ func PackChiMux(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 		if selExpr.Sel.Name == "Mux" && selExpr.X.(*Ident).Name == "chi" {
 			selExpr.X.(*Ident).Name = "server"
 			selExpr.Sel.Name = "Hertz"
-			astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app/server")
+			astutil.AddImport(fset, file, global.HzRepo+"/pkg/app/server")
 		}
 	}
 }

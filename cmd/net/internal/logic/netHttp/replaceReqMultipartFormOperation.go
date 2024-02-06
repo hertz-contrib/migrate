@@ -4,7 +4,7 @@ import (
 	. "go/ast"
 	"go/token"
 
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
+	"github.com/hertz-contrib/migrate/cmd/net/internal/global"
 	"github.com/hertz-contrib/migrate/cmd/net/internal/utils"
 
 	"golang.org/x/tools/go/ast/astutil"
@@ -67,7 +67,7 @@ func ReplaceReqMultipartFormOperation(cur *astutil.Cursor) {
 			if utils.CheckPtrStructName(se, "Request") {
 				opFuncName = selExpr.Sel.Name
 				lhsName = assignStmt.Lhs[0].(*Ident).Name
-				if config.Map["hasMultipartForm"] == true {
+				if global.Map["hasMultipartForm"] == true {
 					blockStmt.List = append(blockStmt.List[:i+1], blockStmt.List[i+2:]...)
 					success()
 					continue
@@ -83,7 +83,7 @@ func ReplaceReqMultipartFormOperation(cur *astutil.Cursor) {
 				}
 				assignStmt.Lhs[0] = NewIdent("_form")
 				assignStmt.Lhs = append(assignStmt.Lhs, NewIdent("err"))
-				config.Map["hasMultipartForm"] = true
+				global.Map["hasMultipartForm"] = true
 				success()
 			}
 		}

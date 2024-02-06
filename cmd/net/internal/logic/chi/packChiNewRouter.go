@@ -1,10 +1,11 @@
 package chi
 
 import (
-	"github.com/hertz-contrib/migrate/cmd/net/internal/config"
-	nethttp "github.com/hertz-contrib/migrate/cmd/net/internal/logic/netHttp"
 	. "go/ast"
 	"go/token"
+
+	"github.com/hertz-contrib/migrate/cmd/net/internal/global"
+	nethttp "github.com/hertz-contrib/migrate/cmd/net/internal/logic/netHttp"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
@@ -26,9 +27,9 @@ func PackChiNewRouter(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 			X:   NewIdent("server"),
 			Sel: NewIdent("Default"),
 		}
-		config.Map["server"] = stmt.Lhs[0].(*Ident).Name
-		astutil.AddImport(fset, file, "github.com/cloudwego/hertz/pkg/app/server")
+		global.Map["server"] = stmt.Lhs[0].(*Ident).Name
+		astutil.AddImport(fset, file, global.HzRepo+"/pkg/app/server")
 		astutil.DeleteImport(fset, file, "github.com/go-chi/chi/v5")
-		nethttp.AddOptionsForServer(callExpr, config.Map)
+		nethttp.AddOptionsForServer(callExpr, global.Map)
 	}
 }
