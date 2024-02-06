@@ -15,7 +15,12 @@ func main() {
 }
 
 func _sayhelloName(ctx context.Context, c *app.RequestContext) {
-	value := string(c.FormValue("name"))
+	cookie := string(c.Cookie("csrf_token"))
+
+	token := string(c.FormValue("csrf_token"))
+
+	if cookie == token {
+	}
 	//c.Redirect(http.StatusMovedPermanently, []byte("/api/v1/healthz"))
 	//switch string(c.Method()) {
 	//}

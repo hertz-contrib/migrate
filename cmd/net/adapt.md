@@ -148,6 +148,24 @@ func ping(ctx context.Context, c *app.RequestContext) {
 ```
 - req.URL.String() -> c.URL.String()
 - req.URL.Query().Get -> c.Query
+- req.Cookie -> c.Cookie
+```go
+// net/http
+func ping(w http.ResponseWriter, r *http.Request) {
+    cookie, err := r.Cookie("s")
+	if err != nil {}
+	s := cookie.Value
+	if cookie.Value == "s" {}
+}
+
+// hertz
+func ping(ctx context.Context, c *app.RequestContext) {
+    cookie, err := c.Cookie("s")
+    if err != nil {}
+    s := string(cookie)
+    if string(cookie) == "s" {}
+}
+```
 - req.Form.Get() -> string(c.FormValue())
 - form := req.MultipartForm -> form, err := c.MultipartForm()
 - form := req.MultipartForm.Value/File ->  _form, err := c.MultiPartForm() form := _form.Value/File

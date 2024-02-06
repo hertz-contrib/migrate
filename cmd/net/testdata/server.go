@@ -63,8 +63,14 @@ func main() {
 	//	//}
 	//})
 	mux.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
-		value := r.FormValue("s")
-		http.Redirect(w, r, "/api/v1/healthz", http.StatusMovedPermanently)
+		cookie, err := r.Cookie("csrf_token")
+		//if err != nil {
+		//	slog.Info("unable to get csrf_token cookie" + err.Error())
+		//}
+		//
+		//token := r.FormValue("csrf_token")
+
+		value := cookie.Value
 	})
 
 	//func Route() *http.ServeMux {

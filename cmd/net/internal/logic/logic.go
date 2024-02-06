@@ -145,6 +145,7 @@ func netHttpGroup(c *astutil.Cursor, funcSet mapset.Set[string]) {
 		nethttp.ReplaceRespWrite,
 		nethttp.ReplaceReqURLQuery,
 		nethttp.ReplaceReqURLString,
+		nethttp.ReplaceReqCookie,
 		nethttp.ReplaceReqFormFile,
 		nethttp.ReplaceReqFormGet,
 		nethttp.ReplaceReqFormValue,
