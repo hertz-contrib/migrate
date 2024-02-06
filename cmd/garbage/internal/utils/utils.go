@@ -22,7 +22,7 @@ import (
 	"regexp"
 )
 
-// CheckPtrStructName is a function used to check struc name
+// CheckPtrStructName is a function used to check struct name
 // like r.FormFile, can check r *http.Request struct name is 'Request'
 func CheckPtrStructName(selExpr *SelectorExpr, name string) bool {
 	if ident, ok := selExpr.X.(*Ident); ok {

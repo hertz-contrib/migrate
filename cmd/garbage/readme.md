@@ -9,7 +9,7 @@ go install github.com/hertz-contrib/migrate/cmd/garbage@latest
 ### How to use
 
 ```bash
-go run main.go -targer-dir ./haha
+go run main.go -target-dir ./haha
 ```
 
 ### Warn
