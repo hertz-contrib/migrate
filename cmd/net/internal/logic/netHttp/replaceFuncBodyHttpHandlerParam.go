@@ -17,44 +17,25 @@ func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]
 		case *ExprStmt:
 			switch t := st.X.(type) {
 			case *CallExpr:
-				ident, ok := t.Fun.(*Ident)
-				if ok {
-					replaceCallExprParams(funcSet, t, ident.Name)
-					continue
-				}
-				selExpr, ok := t.Fun.(*SelectorExpr)
-				if ok {
-					replaceCallExprParams(funcSet, t, selExpr.Sel.Name)
-					continue
-				}
+				replaceCallExprParamsWithFuncName(funcSet, t)
+				continue
 			}
 		case *IfStmt:
 			assignStmt, ok := st.Init.(*AssignStmt)
 			if ok {
 				if len(assignStmt.Rhs) == 1 {
 					callExpr, ok := assignStmt.Rhs[0].(*CallExpr)
-					if !ok {
-						continue
-					}
-					selExpr, ok := callExpr.Fun.(*SelectorExpr)
 					if ok {
-						replaceCallExprParams(funcSet, callExpr, selExpr.Sel.Name)
+						replaceCallExprParamsWithFuncName(funcSet, callExpr)
 						continue
 					}
+
 				}
 			}
 			callExpr, ok := st.Cond.(*CallExpr)
 			if ok {
-				ident, ok := callExpr.Fun.(*Ident)
-				if ok {
-					replaceCallExprParams(funcSet, callExpr, ident.Name)
-					continue
-				}
-				selExpr, ok := callExpr.Fun.(*SelectorExpr)
-				if ok {
-					replaceCallExprParams(funcSet, callExpr, selExpr.Sel.Name)
-					continue
-				}
+				replaceCallExprParamsWithFuncName(funcSet, callExpr)
+				continue
 			}
 
 		case *SwitchStmt:
@@ -68,20 +49,9 @@ func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]
 					if ok {
 						callExpr, ok := exprStmt.X.(*CallExpr)
 						if ok {
-							replaceCallExprParams(funcSet, callExpr, callExpr.Fun.(*Ident).Name)
+							replaceCallExprParamsWithFuncName(funcSet, callExpr)
 							continue
 						}
-						ident, ok := callExpr.Fun.(*Ident)
-						if ok {
-							replaceCallExprParams(funcSet, callExpr, ident.Name)
-							continue
-						}
-						selExpr, ok := callExpr.Fun.(*SelectorExpr)
-						if ok {
-							replaceCallExprParams(funcSet, callExpr, selExpr.Sel.Name)
-							continue
-						}
-						continue
 					}
 
 					ifStmt, ok := _case.(*IfStmt)
@@ -90,15 +60,8 @@ func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]
 						if ok {
 							if len(assignStmt.Rhs) == 1 {
 								callExpr, ok := assignStmt.Rhs[0].(*CallExpr)
-								if !ok {
-									continue
-								}
-								switch cc := callExpr.Fun.(type) {
-								case *SelectorExpr:
-									replaceCallExprParams(funcSet, callExpr, cc.Sel.Name)
-									continue
-								case *Ident:
-									replaceCallExprParams(funcSet, callExpr, callExpr.Fun.(*Ident).Name)
+								if ok {
+									replaceCallExprParamsWithFuncName(funcSet, callExpr)
 									continue
 								}
 							}
@@ -106,16 +69,8 @@ func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]
 
 						callExpr, ok := ifStmt.Cond.(*CallExpr)
 						if ok {
-							ident, ok := callExpr.Fun.(*Ident)
-							if ok {
-								replaceCallExprParams(funcSet, callExpr, ident.Name)
-								continue
-							}
-							selExpr, ok := callExpr.Fun.(*SelectorExpr)
-							if ok {
-								replaceCallExprParams(funcSet, callExpr, selExpr.Sel.Name)
-								continue
-							}
+							replaceCallExprParamsWithFuncName(funcSet, callExpr)
+							continue
 						}
 					}
 				}
@@ -123,21 +78,25 @@ func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]
 		case *AssignStmt:
 			for _, rh := range st.Rhs {
 				ce, ok := rh.(*CallExpr)
-				if !ok {
-					continue
-				}
-				ident, ok := ce.Fun.(*Ident)
 				if ok {
-					replaceCallExprParams(funcSet, ce, ident.Name)
-					continue
-				}
-				selExpr, ok := ce.Fun.(*SelectorExpr)
-				if ok {
-					replaceCallExprParams(funcSet, ce, selExpr.Sel.Name)
+					replaceCallExprParamsWithFuncName(funcSet, ce)
 					continue
 				}
 			}
 		}
+	}
+}
+
+func replaceCallExprParamsWithFuncName(funcSet map[string][2]int, callExpr *CallExpr) {
+	ident, ok := callExpr.Fun.(*Ident)
+	if ok {
+		replaceCallExprParams(funcSet, callExpr, ident.Name)
+		return
+	}
+	selExpr, ok := callExpr.Fun.(*SelectorExpr)
+	if ok {
+		replaceCallExprParams(funcSet, callExpr, selExpr.Sel.Name)
+		return
 	}
 }
 
