@@ -32,22 +32,41 @@ func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	}
 
 	funcType, ok := cur.Node().(*FuncType)
-	if !ok || funcType.Results == nil {
-		return
+	if ok {
+		if funcType.Results == nil {
+			return
+		}
+		if len(funcType.Results.List) == 1 {
+			starExpr, ok := funcType.Results.List[0].Type.(*StarExpr)
+			if !ok {
+				return
+			}
+			selExpr, ok := starExpr.X.(*SelectorExpr)
+			if !ok {
+				return
+			}
+			if selExpr.Sel.Name == "ServeMux" || selExpr.Sel.Name == "Mux" {
+				selExpr.X.(*Ident).Name = "server"
+				selExpr.Sel.Name = "Hertz"
+			}
+		}
 	}
 
-	if len(funcType.Results.List) == 1 {
-		starExpr, ok := funcType.Results.List[0].Type.(*StarExpr)
-		if !ok {
-			return
-		}
-		selExpr, ok := starExpr.X.(*SelectorExpr)
-		if !ok {
-			return
-		}
-		if selExpr.Sel.Name == "ServeMux" || selExpr.Sel.Name == "Mux" {
-			selExpr.X.(*Ident).Name = "server"
-			selExpr.Sel.Name = "Hertz"
+	fieldList, ok := cur.Node().(*FieldList)
+	if ok {
+		for _, field := range fieldList.List {
+			starExpr, ok := field.Type.(*StarExpr)
+			if !ok {
+				continue
+			}
+			selExpr, ok := starExpr.X.(*SelectorExpr)
+			if !ok {
+				continue
+			}
+			if selExpr.Sel.Name == "ServeMux" || selExpr.Sel.Name == "Mux" {
+				selExpr.X.(*Ident).Name = "server"
+				selExpr.Sel.Name = "Hertz"
+			}
 		}
 	}
 }

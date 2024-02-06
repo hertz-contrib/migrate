@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/go-chi/chi/v5"
 	"net/http"
 	"regexp"
 	"strings"
@@ -155,4 +156,9 @@ func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 		strings.Clone(r.URL.Path)
 		fn(w, r, m[2])
 	}
+}
+func r(r *chi.Mux) {
+	r.Post("/api/v1/books", func(w http.ResponseWriter, r *http.Request) {
+
+	})
 }
