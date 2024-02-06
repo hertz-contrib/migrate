@@ -28,39 +28,3 @@ func GetAllAliasForPackage(fset *token.FileSet, file *File) (m map[string]string
 	}
 	return
 }
-
-func IsHttpResponseWriter(t *Field) bool {
-	packageName := "http"
-	expr, ok := t.Type.(*SelectorExpr)
-	if !ok {
-		return false
-	}
-	v, ok := AliasMap["net/http"]
-	if ok {
-		packageName = v
-	}
-	if expr.X.(*Ident).Name == packageName && expr.Sel.Name == "ResponseWriter" {
-		return true
-	}
-	return false
-}
-
-func IsHttpRequest(t *Field) bool {
-	packageName := "http"
-	expr, ok := t.Type.(*StarExpr)
-	if !ok {
-		return false
-	}
-	selectorExpr, ok := expr.X.(*SelectorExpr)
-	if !ok {
-		return false
-	}
-	v, ok := AliasMap["net/http"]
-	if ok {
-		packageName = v
-	}
-	if selectorExpr.X.(*Ident).Name == packageName && selectorExpr.Sel.Name == "Request" {
-		return true
-	}
-	return false
-}

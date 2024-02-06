@@ -20,7 +20,7 @@ func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 						return
 					}
 					if ident.Name == "http" && fun.Sel.Name == "NewServeMux" {
-						callExpr.Fun.(*SelectorExpr).X.(*Ident).Name = "server"
+						callExpr.Fun.(*SelectorExpr).X.(*Ident).Name = "hzserver"
 						callExpr.Fun.(*SelectorExpr).Sel.Name = "Default"
 						global.Map["server"] = assign.Lhs[0].(*Ident).Name
 						AddOptionsForServer(callExpr, global.Map)
@@ -45,7 +45,7 @@ func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 				return
 			}
 			if selExpr.Sel.Name == "ServeMux" || selExpr.Sel.Name == "Mux" {
-				selExpr.X.(*Ident).Name = "server"
+				selExpr.X.(*Ident).Name = "hzserver"
 				selExpr.Sel.Name = "Hertz"
 			}
 		}
@@ -63,7 +63,7 @@ func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 				continue
 			}
 			if selExpr.Sel.Name == "ServeMux" || selExpr.Sel.Name == "Mux" {
-				selExpr.X.(*Ident).Name = "server"
+				selExpr.X.(*Ident).Name = "hzserver"
 				selExpr.Sel.Name = "Hertz"
 			}
 		}

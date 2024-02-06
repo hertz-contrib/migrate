@@ -72,7 +72,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
-					X:   NewIdent("app"),
+					X:   NewIdent("hzapp"),
 					Sel: NewIdent("RequestContext"),
 				},
 			},
@@ -94,7 +94,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
-					X:   NewIdent("app"),
+					X:   NewIdent("hzapp"),
 					Sel: NewIdent("RequestContext"),
 				},
 			},
@@ -112,7 +112,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
-					X:   NewIdent("app"),
+					X:   NewIdent("hzapp"),
 					Sel: NewIdent("RequestContext"),
 				},
 			},
@@ -128,7 +128,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
-					X:   NewIdent("app"),
+					X:   NewIdent("hzapp"),
 					Sel: NewIdent("RequestContext"),
 				},
 			},
@@ -158,7 +158,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 		Names: cName,
 		Type: &StarExpr{
 			X: &SelectorExpr{
-				X:   NewIdent("app"),
+				X:   NewIdent("hzapp"),
 				Sel: NewIdent("RequestContext"),
 			},
 		},
@@ -183,7 +183,7 @@ func twoWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	if !ok || selExpr.Sel.Name != "Handler" || selExpr.X.(*Ident).Name != "http" {
 		return
 	}
-	selExpr.X.(*Ident).Name = "app"
+	selExpr.X.(*Ident).Name = "hzapp"
 	selExpr.Sel.Name = "HandlerFunc"
 
 	for _, stmt := range funcDecl.Body.List {
@@ -241,7 +241,7 @@ func twoWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 				Names: cName,
 				Type: &StarExpr{
 					X: &SelectorExpr{
-						X:   NewIdent("app"),
+						X:   NewIdent("hzapp"),
 						Sel: NewIdent("RequestContext"),
 					},
 				},
@@ -268,7 +268,7 @@ func oneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	if !ok || selExpr.Sel.Name != "HandlerFunc" || selExpr.X.(*Ident).Name != "http" {
 		return
 	}
-	selExpr.X.(*Ident).Name = "app"
+	selExpr.X.(*Ident).Name = "hzapp"
 	for _, stmt := range funcDecl.Body.List {
 		returnStmt, ok := stmt.(*ReturnStmt)
 		if !ok || len(returnStmt.Results) != 1 {
@@ -319,7 +319,7 @@ func oneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 				Names: cName,
 				Type: &StarExpr{
 					X: &SelectorExpr{
-						X:   NewIdent("app"),
+						X:   NewIdent("hzapp"),
 						Sel: NewIdent("RequestContext"),
 					},
 				},
@@ -383,7 +383,7 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
-					X:   NewIdent("app"),
+					X:   NewIdent("hzapp"),
 					Sel: NewIdent("RequestContext"),
 				},
 			},
@@ -404,7 +404,7 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
-					X:   NewIdent("app"),
+					X:   NewIdent("hzapp"),
 					Sel: NewIdent("RequestContext"),
 				},
 			},
@@ -421,7 +421,7 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
-					X:   NewIdent("app"),
+					X:   NewIdent("hzapp"),
 					Sel: NewIdent("RequestContext"),
 				},
 			},
@@ -437,7 +437,7 @@ func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 			Names: cName,
 			Type: &StarExpr{
 				X: &SelectorExpr{
-					X:   NewIdent("app"),
+					X:   NewIdent("hzapp"),
 					Sel: NewIdent("RequestContext"),
 				},
 			},

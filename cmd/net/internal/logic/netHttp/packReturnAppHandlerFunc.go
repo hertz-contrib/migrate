@@ -32,7 +32,7 @@ func packReturnStmt2AppHandlerFunc(cur *astutil.Cursor) {
 			funcType.Results.List = []*Field{
 				{
 					Type: &SelectorExpr{
-						X:   NewIdent("app"),
+						X:   NewIdent("hzapp"),
 						Sel: NewIdent("HandlerFunc"),
 					},
 				},

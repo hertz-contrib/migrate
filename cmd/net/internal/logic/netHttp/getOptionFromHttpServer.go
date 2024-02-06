@@ -62,6 +62,5 @@ func processHttpServerOptions(block *BlockStmt, index int) {
 			global.Map[key] = kvExpr.Value
 		}
 	}
-	// Remove the http.Server assignment statement
-	//block.List = append(block.List[:index], block.List[index+1:]...)
+
 }

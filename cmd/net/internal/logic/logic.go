@@ -25,6 +25,7 @@ var (
 	funcSet   mapset.Set[string]
 	goModDirs []string
 	wg        sync.WaitGroup
+	_args     args.Args
 )
 
 func init() {
@@ -34,14 +35,12 @@ func init() {
 
 func Run(opt args.Args) {
 	global.HzRepo = opt.HzRepo
-	if opt.Debug {
-		beforeProcessFile(opt.Filepath)
-		processFile(opt.Filepath, opt.PrintMode, opt.Debug)
-		return
-	}
-
+	_args = opt
 	if opt.TargetDir != "" {
 		gofiles, err := utils.CollectGoFiles(opt.TargetDir)
+		if err != nil {
+			log.Fatal("Error collecting go files:", err)
+		}
 		goModDirs = utils.SearchAllDirHasGoMod(opt.TargetDir)
 		for _, dir := range goModDirs {
 			wg.Add(1)
@@ -52,9 +51,7 @@ func Run(opt args.Args) {
 			}()
 		}
 		wg.Wait()
-		if err != nil {
-			log.Fatal(err)
-		}
+
 		beforeProcessFiles(gofiles)
 		processFiles(gofiles, opt.Debug)
 		for _, dir := range goModDirs {
@@ -134,6 +131,9 @@ func processFile(path, printMode string, debug bool) {
 }
 
 func processAST(file *ast.File, fset *token.FileSet) {
+	astutil.AddNamedImport(fset, file, "hzserver", _args.HzRepo+"/pkg/server")
+	astutil.AddNamedImport(fset, file, "hzapp", _args.HzRepo+"/pkg/app")
+
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
 		nethttp.GetOptionsFromHttpServer(c)
 		nethttp.PackServerHertz(c, fset, file)
