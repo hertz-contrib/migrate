@@ -54,69 +54,67 @@ type Config struct {
 	Addr string
 }
 
-func main() {
-	//svc := &Config{}
-	mux := http.NewServeMux()
-	//mux.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
-	//	//if err := svc.wj(w, r, map[string]string{"hello": "world"}); err != nil {
-	//	//	return
-	//	//}
-	//})
-	mux.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie("csrf_token")
-		//if err != nil {
-		//	slog.Info("unable to get csrf_token cookie" + err.Error())
-		//}
-		//
-		//token := r.FormValue("csrf_token")
+//func main() {
+//svc := &Config{}
+//mux := http.NewServeMux()
+//mux.HandleFunc("/hello", func(w http.ResponseWriter, r *http.Request) {
+//	//if err := svc.wj(w, r, map[string]string{"hello": "world"}); err != nil {
+//	//	return
+//	//}
+//})
+//mux.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
+//if err != nil {
+//	slog.Info("unable to get csrf_token cookie" + err.Error())
+//}
+//
+//token := r.FormValue("csrf_token")
 
-		value := cookie.Value
-	})
+//})
 
-	//func Route() *http.ServeMux {
-	//	mux := http.NewServeMux()
-	//	return mux
-	//}
+//func Route() *http.ServeMux {
+//	mux := http.NewServeMux()
+//	return mux
+//}
 
-	// func (svc *Config) wj(w http.ResponseWriter, r *http.Request, data any) error {
-	// w.Header().Set("Content-Type", "application/json")
-	// marshal, err := json.Marshal(data)
-	//
-	//	if err != nil {
-	//		http.Error(w, err.Error(), http.StatusInternalServerError)
-	//		return
-	//	}
-	//
-	// return nil
-	// }
+// func (svc *Config) wj(w http.ResponseWriter, r *http.Request, data any) error {
+// w.Header().Set("Content-Type", "application/json")
+// marshal, err := json.Marshal(data)
+//
+//	if err != nil {
+//		http.Error(w, err.Error(), http.StatusInternalServerError)
+//		return
+//	}
+//
+// return nil
+// }
 
-	//func (svc *service) _getUpdateOrDeleteBooks(w http.ResponseWriter, r *http.Request) {
-	//
-	//	getId := func(r *http.Request) (int64, error) {
-	//		id, err := strconv.ParseInt(r.URL.Path[len("api/v1/books/"):], 10, 64)
-	//		if err != nil {
-	//			http.Error(w, "", http.StatusBadRequest)
-	//		}
-	//		return id, err
-	//	}
-	//
-	//	switch r.Method {
-	//	case http.MethodGet:
-	//		if id, err := getId(r); err == nil {
-	//			svc.getBook(id, w, r)
-	//		}
-	//	case http.MethodPut:
-	//		if id, err := getId(r); err == nil {
-	//			svc.updateBook(id, w, r)
-	//		}
-	//	case http.MethodDelete:
-	//		if id, err := getId(r); err == nil {
-	//			svc.deleteBook(id, w, r)
-	//		}
-	//	default:
-	//		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
-	//	}
-}
+//func (svc *service) _getUpdateOrDeleteBooks(w http.ResponseWriter, r *http.Request) {
+//
+//	getId := func(r *http.Request) (int64, error) {
+//		id, err := strconv.ParseInt(r.URL.Path[len("api/v1/books/"):], 10, 64)
+//		if err != nil {
+//			http.Error(w, "", http.StatusBadRequest)
+//		}
+//		return id, err
+//	}
+//
+//	switch r.Method {
+//	case http.MethodGet:
+//		if id, err := getId(r); err == nil {
+//			svc.getBook(id, w, r)
+//		}
+//	case http.MethodPut:
+//		if id, err := getId(r); err == nil {
+//			svc.updateBook(id, w, r)
+//		}
+//	case http.MethodDelete:
+//		if id, err := getId(r); err == nil {
+//			svc.deleteBook(id, w, r)
+//		}
+//	default:
+//		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+//	}
+//}
 
 //
 //	func f(w http.ResponseWriter, r *http.Request) {
@@ -146,3 +144,10 @@ func main() {
 //	w.WriteHeader(statusCode)
 //	w.Header().Set("Content-Type", "application/problem+json")
 //}
+
+func d() func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(400)
+		w.Write([]byte("Hello World!"))
+	}
+}

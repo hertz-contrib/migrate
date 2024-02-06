@@ -152,6 +152,7 @@ func netHttpGroup(c *astutil.Cursor, funcSet mapset.Set[string]) {
 		nethttp.ReplaceReqMultipartForm,
 		nethttp.ReplaceReqMultipartFormOperation,
 		func(c *astutil.Cursor) {
+			nethttp.PackType2AppHandlerFunc(c)
 			nethttp.ReplaceFuncBodyHttpHandlerParam(c, funcSet)
 		},
 	}

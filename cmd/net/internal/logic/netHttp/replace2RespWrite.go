@@ -53,7 +53,7 @@ func ReplaceRespWrite(cur *astutil.Cursor) {
 					X:   NewIdent("c"),
 					Sel: NewIdent("Response"),
 				},
-				Sel: NewIdent("Write"),
+				Sel: NewIdent("SetBody"),
 			}
 		}
 	}

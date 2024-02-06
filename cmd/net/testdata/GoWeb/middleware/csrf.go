@@ -7,7 +7,7 @@ import (
 )
 
 // Csrf validates the CSRF token and returns the handler function if it succeeded
-func Csrf(f func(w http.ResponseWriter, r *http.Request)) func(w http.ResponseWriter, r *http.Request) {
+func Csrf(f func(w http.ResponseWriter, r *http.Request)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, err := security.VerifyCsrfToken(r)
 		if err != nil {

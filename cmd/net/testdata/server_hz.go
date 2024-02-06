@@ -37,3 +37,10 @@ func _sayhelloName(ctx context.Context, c *app.RequestContext) {
 	//s := c.URI().String()
 	//file, err := c.Request.FormFile("s")
 }
+
+func d() app.HandlerFunc {
+	return func(ctx context.Context, c *app.RequestContext) {
+		c.SetStatusCode(400)
+		c.Response.SetBody([]byte("Hello World!"))
+	}
+}
