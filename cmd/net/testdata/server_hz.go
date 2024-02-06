@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
-	"net/http"
 )
 
 func main() {
@@ -16,7 +15,8 @@ func main() {
 }
 
 func _sayhelloName(ctx context.Context, c *app.RequestContext) {
-	c.Redirect(http.StatusMovedPermanently, []byte("/api/v1/healthz"))
+	value := string(c.FormValue("name"))
+	//c.Redirect(http.StatusMovedPermanently, []byte("/api/v1/healthz"))
 	//switch string(c.Method()) {
 	//}
 	//if string(c.Method()) == "POST" {

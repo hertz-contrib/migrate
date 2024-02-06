@@ -163,7 +163,7 @@ func ping(ctx context.Context, c *app.RequestContext) {
 	form := _form.Value
 }
 ```
-- req.FormValue -> c.FormValue
+- req.FormValue -> string(c.FormValue)
 - http.HandlerFunc-> h.Any
 - resp.Header() -> c.Response.Header
 - resp.Header().Get/Del -> c.Response.Header.Get/Del

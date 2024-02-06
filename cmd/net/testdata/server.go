@@ -63,6 +63,7 @@ func main() {
 	//	//}
 	//})
 	mux.HandleFunc("/api/v1/health", func(w http.ResponseWriter, r *http.Request) {
+		value := r.FormValue("s")
 		http.Redirect(w, r, "/api/v1/healthz", http.StatusMovedPermanently)
 	})
 

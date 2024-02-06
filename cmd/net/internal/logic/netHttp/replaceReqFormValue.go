@@ -17,7 +17,19 @@ func ReplaceReqFormValue(cur *astutil.Cursor) {
 	}
 	if selExpr.Sel.Name == "FormValue" {
 		if utils.CheckPtrStructName(selExpr, "Request") {
-			selExpr.X = NewIdent("c")
+			args := callExpr.Args
+			cur.Replace(&CallExpr{
+				Fun: NewIdent("string"),
+				Args: []Expr{
+					&CallExpr{
+						Fun: &SelectorExpr{
+							X:   NewIdent("c"),
+							Sel: NewIdent("FormValue"),
+						},
+						Args: args,
+					},
+				},
+			})
 		}
 	}
 }
