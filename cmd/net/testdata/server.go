@@ -1,7 +1,8 @@
 package main
 
 import (
-	"encoding/json"
+	"errors"
+	"github.com/hertz-contrib/migrate/cmd/net/testdata/internal/data"
 	"net/http"
 )
 
@@ -135,12 +136,31 @@ type Config struct {
 //		}
 //		return nil, false
 //	}
-func f(w http.ResponseWriter, r *http.Request) {
-	err := writeJSON(w, http.StatusCreated, envelope{"book": "book"})
+//
+//	func f(w http.ResponseWriter, r *http.Request) {
+//		err := writeJSON(w, http.StatusCreated, envelope{"book": "book"})
+//	}
+//
+//	func writeJSON(w http.ResponseWriter, status int, data any) error {
+//		w.WriteHeader(status)
+//		w.Header().Set("Content-Type", "application/json")
+//		return json.NewEncoder(w).Encode(data)
+//	}
+func writeNotFoundOrBadRequestIfHasError(err error, w http.ResponseWriter, r *http.Request) bool {
+	if err != nil {
+		switch {
+		case errors.Is(err, data.NotFoundError):
+			writeProblemDetails(w, r, "Not Found", http.StatusNotFound, "matching book not found")
+		default:
+			writeProblemDetails(w, r, "server error", http.StatusInternalServerError, err.Error())
+		}
+		return true
+	}
+	return false
 }
 
-func writeJSON(w http.ResponseWriter, status int, data any) error {
-	w.WriteHeader(status)
-	w.Header().Set("Content-Type", "application/json")
-	return json.NewEncoder(w).Encode(data)
+func writeProblemDetails(w http.ResponseWriter, r *http.Request, title string,
+	statusCode int, detail string) {
+	w.WriteHeader(statusCode)
+	w.Header().Set("Content-Type", "application/problem+json")
 }

@@ -68,6 +68,7 @@ func ReplaceFuncBodyHttpHandlerParam(cur *astutil.Cursor, funcSet map[string][2]
 					if ok {
 						callExpr, ok := exprStmt.X.(*CallExpr)
 						if ok {
+							replaceCallExprParams(funcSet, callExpr, callExpr.Fun.(*Ident).Name)
 							continue
 						}
 						ident, ok := callExpr.Fun.(*Ident)
