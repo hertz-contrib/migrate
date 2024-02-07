@@ -16,8 +16,10 @@ package args
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal"
 )
@@ -41,6 +43,7 @@ type Args struct {
 	HzRepo       string
 	HertzVersion string
 	PrintMode    string
+	IgnoreDirs   []string
 	Debug        bool
 	extends      []*ExtraFlag
 }
@@ -51,6 +54,11 @@ func (a *Args) buildFlags() *flag.FlagSet {
 	fset.StringVar(&a.HzRepo, "hz-repo", "github.com/cloudwego/hertz", "")
 	fset.StringVar(&a.TargetDir, "target-dir", "", "target project directory")
 	fset.BoolVar(&a.Version, "v", false, internal.Version)
+	fset.Var((*stringSliceValue)(&a.IgnoreDirs), "ignore-dirs",
+		`Fill in the folders to be ignored, separating the folders with ",".
+Example:
+    hertz_migrate -target-dir ./project -ignore-dirs=kitex_gen,hz_gen
+	`)
 	fset.StringVar(&a.HertzVersion, "hz-version", "", "add hertz version when tool exec go get ...")
 	return fset
 }
@@ -65,4 +73,15 @@ func (a *Args) Parse() {
 		log.Println(err)
 		os.Exit(2)
 	}
+}
+
+type stringSliceValue []string
+
+func (s *stringSliceValue) Set(value string) error {
+	*s = strings.Split(value, ",")
+	return nil
+}
+
+func (s *stringSliceValue) String() string {
+	return fmt.Sprintf("%v", *s)
 }

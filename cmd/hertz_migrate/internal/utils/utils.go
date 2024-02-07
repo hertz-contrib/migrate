@@ -16,10 +16,12 @@ package utils
 
 import (
 	"fmt"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
 	. "go/ast"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 // CheckPtrStructName is a function used to check struct name
@@ -110,6 +112,13 @@ func CollectGoFiles(directory string) ([]string, error) {
 		return nil, err
 	}
 	err = filepath.Walk(abs, func(path string, info os.FileInfo, err error) error {
+		if info.IsDir() {
+			for _, dir := range global.IgnoreDirs {
+				if strings.Contains(info.Name(), dir) {
+					return nil
+				}
+			}
+		}
 		if !info.IsDir() && filepath.Ext(path) == ".go" {
 			goFiles = append(goFiles, path)
 		}

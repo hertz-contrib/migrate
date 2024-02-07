@@ -16,10 +16,14 @@ Usage of hertz_migrate:
          (default "github.com/cloudwego/hertz")
   -hz-version string
         add hertz version when tool exec go get ...
+  -ignore-dirs value
+        Fill in the folders to be ignored, separating the folders with ",".
+        Example:
+            hertz_migrate -target-dir ./project -ignore-dirs=kitex_gen,hz_gen
+                
   -target-dir string
         target project directory
   -v    v0.0.1
-
 ```
 
 #### Usage

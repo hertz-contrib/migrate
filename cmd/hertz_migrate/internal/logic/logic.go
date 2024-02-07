@@ -49,6 +49,7 @@ func init() {
 func Run(opt args.Args) {
 	global.HzRepo = opt.HzRepo
 	global.HzVersion = opt.HertzVersion
+	global.IgnoreDirs = opt.IgnoreDirs
 	if opt.TargetDir != "" {
 		gofiles, err := utils.CollectGoFiles(opt.TargetDir)
 		if err != nil {
