@@ -16,7 +16,7 @@ package args
 
 import (
 	"flag"
-	"github.com/hertz-contrib/migrate/cmd/tool/internal"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal"
 	"log"
 	"os"
 )

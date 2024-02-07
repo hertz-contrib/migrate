@@ -17,7 +17,7 @@ package netHttp
 import (
 	. "go/ast"
 
-	"github.com/hertz-contrib/migrate/cmd/tool/internal/utils"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/utils"
 
 	"golang.org/x/tools/go/ast/astutil"
 )

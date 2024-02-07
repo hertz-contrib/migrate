@@ -18,8 +18,8 @@ import (
 	. "go/ast"
 	"go/token"
 
-	"github.com/hertz-contrib/migrate/cmd/tool/internal/global"
-	"github.com/hertz-contrib/migrate/cmd/tool/internal/utils"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/utils"
 
 	"golang.org/x/tools/go/ast/astutil"
 )

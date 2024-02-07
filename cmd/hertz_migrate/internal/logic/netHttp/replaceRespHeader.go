@@ -12,34 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package chi
+package netHttp
 
 import (
-	"github.com/hertz-contrib/migrate/cmd/tool/internal/global"
-	nethttp "github.com/hertz-contrib/migrate/cmd/tool/internal/logic/netHttp"
 	. "go/ast"
+
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/utils"
+
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func PackChiNewRouter(cur *astutil.Cursor) {
-	stmt, ok := cur.Node().(*AssignStmt)
-	if !ok || len(stmt.Lhs) != 1 || len(stmt.Rhs) != 1 {
-		return
-	}
-	callExpr, ok := stmt.Rhs[0].(*CallExpr)
+func ReplaceRespHeader(cur *astutil.Cursor) {
+	callExpr, ok := cur.Node().(*CallExpr)
 	if !ok {
 		return
 	}
+
 	selExpr, ok := callExpr.Fun.(*SelectorExpr)
-	if !ok {
+	if !ok || selExpr.Sel == nil {
 		return
 	}
-	if selExpr.Sel.Name == "NewRouter" {
-		callExpr.Fun = &SelectorExpr{
-			X:   NewIdent("server"),
-			Sel: NewIdent("Default"),
+
+	if selExpr.Sel.Name == "Header" {
+		if utils.CheckStructName(selExpr, "ResponseWriter") {
+			callExpr := &SelectorExpr{
+				X: &SelectorExpr{
+					X:   NewIdent("c"),
+					Sel: NewIdent("Response"),
+				},
+				Sel: NewIdent("Header"),
+			}
+			// Replace the right-hand side of the assignment statement
+			cur.Replace(callExpr)
 		}
-		global.Map["server"] = stmt.Lhs[0].(*Ident).Name
-		nethttp.AddOptionsForServer(callExpr, global.Map)
 	}
 }

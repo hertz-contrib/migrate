@@ -45,7 +45,7 @@ func RunGoGet(path string, repo string) {
 		fmt.Println("Error changing directory:", err)
 		return
 	}
-	cmd := exec.Command("go", "get", "-u", repo)
+	cmd := exec.Command("go", "get", repo)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()

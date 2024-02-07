@@ -15,9 +15,9 @@
 package main
 
 import (
-	"github.com/hertz-contrib/migrate/cmd/tool/internal"
-	"github.com/hertz-contrib/migrate/cmd/tool/internal/args"
-	"github.com/hertz-contrib/migrate/cmd/tool/internal/logic"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/args"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logic"
 	"os"
 )
 

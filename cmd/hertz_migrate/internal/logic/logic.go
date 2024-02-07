@@ -28,11 +28,11 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 
 	mapset "github.com/deckarep/golang-set/v2"
-	"github.com/hertz-contrib/migrate/cmd/tool/internal/args"
-	"github.com/hertz-contrib/migrate/cmd/tool/internal/global"
-	"github.com/hertz-contrib/migrate/cmd/tool/internal/logic/chi"
-	nethttp "github.com/hertz-contrib/migrate/cmd/tool/internal/logic/netHttp"
-	"github.com/hertz-contrib/migrate/cmd/tool/internal/utils"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/args"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logic/chi"
+	nethttp "github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logic/netHttp"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/utils"
 )
 
 var (

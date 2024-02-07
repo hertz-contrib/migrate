@@ -17,31 +17,34 @@ package netHttp
 import (
 	. "go/ast"
 
-	"github.com/hertz-contrib/migrate/cmd/tool/internal/utils"
-
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/utils"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func ReplaceReqHeader(cur *astutil.Cursor) {
-	assignStmt, ok := cur.Node().(*AssignStmt)
-	if !ok || len(assignStmt.Rhs) != 1 {
+func ReplaceReqFormValue(cur *astutil.Cursor) {
+	callExpr, ok := cur.Node().(*CallExpr)
+	if !ok {
 		return
 	}
-
-	selExpr, ok := assignStmt.Rhs[0].(*SelectorExpr)
-	if !ok || selExpr.Sel.Name != "Header" {
+	selExpr, ok := callExpr.Fun.(*SelectorExpr)
+	if !ok || selExpr.Sel == nil {
 		return
 	}
-
-	if utils.CheckPtrStructName(selExpr, "Request") {
-		callExpr := &SelectorExpr{
-			X: &SelectorExpr{
-				X:   NewIdent("c"),
-				Sel: NewIdent("Request"),
-			},
-			Sel: NewIdent("Header"),
+	if selExpr.Sel.Name == "FormValue" {
+		if utils.CheckPtrStructName(selExpr, "Request") {
+			args := callExpr.Args
+			cur.Replace(&CallExpr{
+				Fun: NewIdent("string"),
+				Args: []Expr{
+					&CallExpr{
+						Fun: &SelectorExpr{
+							X:   NewIdent("c"),
+							Sel: NewIdent("FormValue"),
+						},
+						Args: args,
+					},
+				},
+			})
 		}
-		// Replace the right-hand side of the assignment statement
-		assignStmt.Rhs[0] = callExpr
 	}
 }

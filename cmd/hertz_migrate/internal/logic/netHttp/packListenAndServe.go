@@ -17,33 +17,22 @@ package netHttp
 import (
 	. "go/ast"
 
-	"github.com/hertz-contrib/migrate/cmd/tool/internal/utils"
-
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func ReplaceRespHeader(cur *astutil.Cursor) {
-	callExpr, ok := cur.Node().(*CallExpr)
-	if !ok {
-		return
-	}
-
-	selExpr, ok := callExpr.Fun.(*SelectorExpr)
-	if !ok || selExpr.Sel == nil {
-		return
-	}
-
-	if selExpr.Sel.Name == "Header" {
-		if utils.CheckStructName(selExpr, "ResponseWriter") {
-			callExpr := &SelectorExpr{
-				X: &SelectorExpr{
-					X:   NewIdent("c"),
-					Sel: NewIdent("Response"),
-				},
-				Sel: NewIdent("Header"),
+func PackListenAndServe(cur *astutil.Cursor) {
+	selExpr, ok := cur.Node().(*SelectorExpr)
+	if ok {
+		if selExpr.Sel == nil {
+			return
+		}
+		if selExpr.Sel.Name == "ListenAndServe" {
+			v, ok := global.Map["server"]
+			if ok {
+				selExpr.X.(*Ident).Name = v.(string)
+				selExpr.Sel.Name = "Spin"
 			}
-			// Replace the right-hand side of the assignment statement
-			cur.Replace(callExpr)
 		}
 	}
 }
