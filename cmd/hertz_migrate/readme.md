@@ -1,4 +1,4 @@
-## Tool
+## hertz_migrate
 
 ### How to install
 
