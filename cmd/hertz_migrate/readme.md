@@ -3,7 +3,7 @@
 ### How to install
 
 ```bash
-go install github.com/hertz-contrib/migrate/cmd/hertz_migratel@latest
+go install github.com/hertz-contrib/migrate/cmd/hertz_migrate@latest
 ```
 
 ### How to use
@@ -11,12 +11,15 @@ go install github.com/hertz-contrib/migrate/cmd/hertz_migratel@latest
 #### Args
 
 ```bash
-Usage of ./hertz_migrate:
+Usage of hertz_migrate:
   -hz-repo string
          (default "github.com/cloudwego/hertz")
+  -hz-version string
+        add hertz version when tool exec go get ...
   -target-dir string
         target project directory
   -v    v0.0.1
+
 ```
 
 #### Usage
