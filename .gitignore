@@ -27,6 +27,8 @@ output/*
 
 # Vscode files
 .vscode
+testdata
 
 
 __pycache__
+*_pri.go
