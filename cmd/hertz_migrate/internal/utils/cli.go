@@ -39,13 +39,18 @@ func RunGoImports(path string) {
 	}
 }
 
-func RunGoGet(path, repo string) {
+func RunGoGet(path, repo string, version string) {
 	err := os.Chdir(path)
 	if err != nil {
 		fmt.Println("Error changing directory:", err)
 		return
 	}
-	cmd := exec.Command("go", "get", repo)
+	var cmd *exec.Cmd
+	if version != "" {
+		cmd = exec.Command("go", "get", repo, version)
+	} else {
+		cmd = exec.Command("go", "get", repo, "@latest")
+	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	err = cmd.Run()

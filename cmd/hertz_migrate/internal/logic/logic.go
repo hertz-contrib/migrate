@@ -48,6 +48,7 @@ func init() {
 
 func Run(opt args.Args) {
 	global.HzRepo = opt.HzRepo
+	global.HzVersion = opt.HertzVersion
 	if opt.TargetDir != "" {
 		gofiles, err := utils.CollectGoFiles(opt.TargetDir)
 		if err != nil {
@@ -59,16 +60,23 @@ func Run(opt args.Args) {
 			dir := dir
 			go func() {
 				defer wg.Done()
-				utils.RunGoGet(dir, global.HzRepo)
+				utils.RunGoGet(dir, global.HzRepo, global.HzVersion)
 			}()
 		}
 		wg.Wait()
 
 		beforeProcessFiles(gofiles)
 		processFiles(gofiles, opt.Debug)
+
 		for _, dir := range goModDirs {
-			utils.RunGoImports(dir)
+			wg.Add(1)
+			dir := dir
+			go func(dir string) {
+				utils.RunGoImports(dir)
+				wg.Done()
+			}(dir)
 		}
+		wg.Wait()
 	}
 	os.Exit(0)
 }

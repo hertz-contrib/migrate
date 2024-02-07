@@ -35,13 +35,14 @@ type ExtraFlag struct {
 }
 
 type Args struct {
-	Version   bool
-	TargetDir string
-	Filepath  string
-	HzRepo    string
-	PrintMode string
-	Debug     bool
-	extends   []*ExtraFlag
+	Version      bool
+	TargetDir    string
+	Filepath     string
+	HzRepo       string
+	HertzVersion string
+	PrintMode    string
+	Debug        bool
+	extends      []*ExtraFlag
 }
 
 func (a *Args) buildFlags() *flag.FlagSet {
@@ -50,6 +51,7 @@ func (a *Args) buildFlags() *flag.FlagSet {
 	fset.StringVar(&a.HzRepo, "hz-repo", "github.com/cloudwego/hertz", "")
 	fset.StringVar(&a.TargetDir, "target-dir", "", "target project directory")
 	fset.BoolVar(&a.Version, "v", false, internal.Version)
+	fset.StringVar(&a.HertzVersion, "hz-version", "", "add hertz version when tool exec go get ...")
 	return fset
 }
 
