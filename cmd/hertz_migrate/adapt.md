@@ -239,7 +239,7 @@ func ping(ctx context.Context, c *app.RequestContext) {
 ```go
 // net/http
 srv := &http.Server{
-	// 类似填入 cfg.Addr 的复杂度太高, 无法直接适配
+	// 类似填入 cfg.Addr 的复杂度太高, 无法直接适配    
     Addr:    ":8080", // 现可填入 fmt.Sprintf(":8080") 
 	ReadTimeout: 10 * time.Second,
 }
@@ -298,6 +298,6 @@ r.Method("GET", "/ping/{id}", func(w http.ResponseWriter, r *http.Request) {
 // hertz
 r := server.Default()
 r.Handle("GET", "/ping/{id}", func(ctx context.Context, c *app.RequestContext) {
-   c.Response.Write([]byte("pong"))
+    c.Response.Write([]byte("pong"))
 })
 ```

@@ -25,6 +25,9 @@ Usage of ./hertz_migrate:
 hertz_migrate -target-dir ${dir-name}
 ```
 
+### Adapt progress
+[readme](./adapt.md)
+
 ### Warn
 
 1. You must make sure that each subproject in the `target-dir` has a `go.mod` file, but you can continue to use it even if it doesn't
