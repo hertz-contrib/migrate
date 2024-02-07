@@ -49,7 +49,7 @@ func RunGoGet(path, repo string, version string) {
 	if version != "" {
 		cmd = exec.Command("go", "get", repo, version)
 	} else {
-		cmd = exec.Command("go", "get", repo, "@latest")
+		cmd = exec.Command("go", "get", repo)
 	}
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

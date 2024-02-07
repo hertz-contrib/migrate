@@ -69,14 +69,8 @@ func Run(opt args.Args) {
 		processFiles(gofiles, opt.Debug)
 
 		for _, dir := range goModDirs {
-			wg.Add(1)
-			dir := dir
-			go func(dir string) {
-				utils.RunGoImports(dir)
-				wg.Done()
-			}(dir)
+			utils.RunGoImports(dir)
 		}
-		wg.Wait()
 	}
 	os.Exit(0)
 }
