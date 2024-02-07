@@ -76,5 +76,4 @@ func processHttpServerOptions(block *BlockStmt, index int) {
 			global.Map[key] = kvExpr.Value
 		}
 	}
-
 }

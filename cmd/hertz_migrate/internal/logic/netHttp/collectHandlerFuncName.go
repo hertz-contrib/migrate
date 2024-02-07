@@ -104,9 +104,7 @@ func collectTmpFuncName(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 }
 
 func collectCommonFuncName(cur *astutil.Cursor, funcSet mapset.Set[string]) {
-	var (
-		paramList []*Field
-	)
+	var paramList []*Field
 	funcDecl, ok := cur.Node().(*FuncDecl)
 	if !ok {
 		return

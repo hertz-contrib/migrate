@@ -179,7 +179,6 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 	}
 	fields := []*Field{ctx, c}
 	fieldList.List = fields
-
 }
 
 func twoWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {

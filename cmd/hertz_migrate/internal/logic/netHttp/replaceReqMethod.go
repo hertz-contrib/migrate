@@ -76,6 +76,7 @@ func replaceAssignStmtReqMethod(cur *astutil.Cursor) {
 		}
 	}
 }
+
 func replaceIfStmtReqMethod(cur *astutil.Cursor) {
 	ifStmt, ok := cur.Node().(*IfStmt)
 	if !ok {

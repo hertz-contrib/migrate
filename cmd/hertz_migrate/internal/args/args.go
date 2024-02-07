@@ -16,14 +16,13 @@ package args
 
 import (
 	"flag"
-	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal"
 	"log"
 	"os"
+
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal"
 )
 
-var (
-	fset *flag.FlagSet
-)
+var fset *flag.FlagSet
 
 type ExtraFlag struct {
 	// apply may add flags to the FlagSet.
@@ -49,7 +48,7 @@ func (a *Args) buildFlags() *flag.FlagSet {
 	fset = flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
 
 	fset.StringVar(&a.HzRepo, "hz-repo", "github.com/cloudwego/hertz", "")
-	fset.StringVar(&a.TargetDir, "target-dir", "", "target directory")
+	fset.StringVar(&a.TargetDir, "target-dir", "", "target project directory")
 	fset.BoolVar(&a.Version, "v", false, internal.Version)
 	return fset
 }

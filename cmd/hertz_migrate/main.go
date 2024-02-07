@@ -15,15 +15,14 @@
 package main
 
 import (
+	"os"
+
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal"
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/args"
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logic"
-	"os"
 )
 
-var (
-	opt args.Args
-)
+var opt args.Args
 
 func main() {
 	opt.Parse()

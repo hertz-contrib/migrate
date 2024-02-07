@@ -39,7 +39,7 @@ func RunGoImports(path string) {
 	}
 }
 
-func RunGoGet(path string, repo string) {
+func RunGoGet(path, repo string) {
 	err := os.Chdir(path)
 	if err != nil {
 		fmt.Println("Error changing directory:", err)

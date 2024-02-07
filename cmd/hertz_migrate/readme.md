@@ -15,10 +15,11 @@ Usage of ./hertz_migrate:
   -hz-repo string
          (default "github.com/cloudwego/hertz")
   -target-dir string
-        target directory
+        target project directory
   -v    v0.0.1
 ```
 
+#### Usage
 ```bash
 # example hertz_migration -target-dir ./haha
 hertz_migrate -target-dir ${dir-name}

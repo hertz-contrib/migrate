@@ -44,7 +44,6 @@ var (
 func init() {
 	global.Map = make(map[string]interface{})
 	funcSet = mapset.NewSet[string]()
-
 }
 
 func Run(opt args.Args) {
@@ -71,6 +70,7 @@ func Run(opt args.Args) {
 			utils.RunGoImports(dir)
 		}
 	}
+	os.Exit(0)
 }
 
 func processFiles(gofiles []string, debug bool) {
@@ -140,7 +140,6 @@ func processFile(path, printMode string, debug bool) {
 	} else {
 		log.Println(err)
 	}
-
 }
 
 func processAST(file *ast.File, fset *token.FileSet) {

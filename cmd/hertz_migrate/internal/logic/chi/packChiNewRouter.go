@@ -15,9 +15,11 @@
 package chi
 
 import (
+	. "go/ast"
+
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
 	nethttp "github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logic/netHttp"
-	. "go/ast"
+
 	"golang.org/x/tools/go/ast/astutil"
 )
 

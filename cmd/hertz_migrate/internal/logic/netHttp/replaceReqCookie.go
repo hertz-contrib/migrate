@@ -60,7 +60,6 @@ func ReplaceReqCookie(cur *astutil.Cursor) {
 					continue
 				}
 			}
-
 		} else {
 			assignStmt, ok := stmt.(*AssignStmt)
 			if ok {
@@ -83,5 +82,4 @@ func ReplaceReqCookie(cur *astutil.Cursor) {
 			}
 		}
 	}
-
 }
