@@ -67,18 +67,21 @@ func Init() *cli.App {
 	app.Flags = []cli.Flag{
 		&cli.StringFlag{
 			Name:        "hz-repo",
+			Aliases:     []string{"r"},
 			Usage:       "Specify the url of the hertz repository you want to bring in.",
 			DefaultText: "github.com/cloudwego/hertz",
 			Destination: &globalArgs.HzRepo,
 		},
 		&cli.StringFlag{
 			Name:        "target-dir",
+			Aliases:     []string{"d"},
 			Usage:       "project directory you wants to migrate",
 			Destination: &globalArgs.TargetDir,
 		},
 		&cli.StringSliceFlag{
-			Name:  "ignore-dirs",
-			Usage: ignoreDirsText,
+			Name:    "ignore-dirs",
+			Aliases: []string{"D"},
+			Usage:   ignoreDirsText,
 		},
 	}
 	app.Action = Run

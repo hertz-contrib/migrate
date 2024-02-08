@@ -24,9 +24,9 @@ COMMANDS:
    help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --hz-repo value                              Specify the url of the hertz repository you want to bring in. (default: github.com/cloudwego/hertz)
-   --target-dir value                           project directory you wants to migrate
-   --ignore-dirs value [ --ignore-dirs value ]  Fill in the folders to be ignored, separating the folders with ",".
+   --hz-repo value, -r value                                        Specify the url of the hertz repository you want to bring in. (default: github.com/cloudwego/hertz)
+   --target-dir value, -d value                                     project directory you wants to migrate
+   --ignore-dirs value, -D value [ --ignore-dirs value, -D value ]  Fill in the folders to be ignored, separating the folders with ",".
       Example:
           hertz_migrate -target-dir ./project -ignore-dirs=kitex_gen,hz_gen
    --help, -h     show help
