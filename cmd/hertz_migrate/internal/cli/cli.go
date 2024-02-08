@@ -127,7 +127,7 @@ var (
 
 func processFiles(gofiles []string, debug bool) {
 	for _, path := range gofiles {
-		processFile(path, "", debug)
+		processFile(path, debug)
 	}
 }
 
@@ -150,7 +150,7 @@ func beforeProcessFile(path string) {
 	}, nil)
 }
 
-func processFile(path, printMode string, debug bool) {
+func processFile(path string, debug bool) {
 	var mode parser.Mode
 	fset := token.NewFileSet()
 	path, err := filepath.Abs(path)
@@ -169,15 +169,6 @@ func processFile(path, printMode string, debug bool) {
 	}
 
 	processAST(file, fset)
-
-	if debug {
-		if printMode == "console" {
-			printer.Fprint(os.Stdout, fset, file)
-		} else {
-			ast.Print(fset, file)
-		}
-		return
-	}
 
 	var buf bytes.Buffer
 	if err := printer.Fprint(&buf, fset, file); err != nil {

@@ -1,5 +1,9 @@
 ## hertz_migrate
 
+### Introduction
+
+Migrate go web code by analyzing ast, currently `hertz_migrate` supports migrating the following frameworks chi (only `func (http.ResponseWriter, *http.Request)` net/http migrations are supported for now)
+
 ### How to install
 
 ```bash
@@ -35,6 +39,7 @@ GLOBAL OPTIONS:
 ```
 
 #### Usage
+
 ```bash
 # example hertz_migration -target-dir ./haha
 hertz_migrate -target-dir ${dir-name}

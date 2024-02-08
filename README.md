@@ -1,4 +1,10 @@
+## hertz_migrate
+通过分析 ast 对代码进行迁移，目前 `hertz_migrate` 支持迁移的框架有 chi (暂只支持 `func (http.ResponseWriter, *http.Request) net/http` 的迁移)
+
+[README](./cmd/hertz_migrate/readme.md)
+
 ## 迁移脚本
+
 
 Hertz-contrib 下提供了其他框架( FastHTTP、Gin ) 迁移至 Hertz 的脚本，具体使用方式如下
 
