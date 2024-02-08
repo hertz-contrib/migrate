@@ -36,7 +36,7 @@ func PackChiMux(cur *astutil.Cursor) {
 			return
 		}
 		if selExpr.Sel.Name == "Mux" && selExpr.X.(*Ident).Name == "chi" {
-			selExpr.X.(*Ident).Name = "server"
+			selExpr.X.(*Ident).Name = "hzserver"
 			selExpr.Sel.Name = "Hertz"
 		}
 	}
