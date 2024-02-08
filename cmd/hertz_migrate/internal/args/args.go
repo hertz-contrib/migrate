@@ -26,6 +26,13 @@ import (
 
 var fset *flag.FlagSet
 
+const hertzVersionUsage = `
+Add hertz version when tool exec go get ...
+Example:
+	hertz_migrate -target-dir ./project -hz-version @latest
+	# go get github.com/cloudwego/hertz@latest
+`
+
 type ExtraFlag struct {
 	// apply may add flags to the FlagSet.
 	Apply func(*flag.FlagSet)
@@ -59,7 +66,7 @@ func (a *Args) buildFlags() *flag.FlagSet {
 Example:
     hertz_migrate -target-dir ./project -ignore-dirs=kitex_gen,hz_gen
 	`)
-	fset.StringVar(&a.HertzVersion, "hz-version", "", "add hertz version when tool exec go get ...")
+	fset.StringVar(&a.HertzVersion, "hz-version", "", hertzVersionUsage)
 	return fset
 }
 
