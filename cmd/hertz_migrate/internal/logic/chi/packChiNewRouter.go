@@ -38,7 +38,7 @@ func PackChiNewRouter(cur *astutil.Cursor) {
 	}
 	if selExpr.Sel.Name == "NewRouter" {
 		callExpr.Fun = &SelectorExpr{
-			X:   NewIdent("server"),
+			X:   NewIdent("hzserver"),
 			Sel: NewIdent("Default"),
 		}
 		global.Map["server"] = stmt.Lhs[0].(*Ident).Name
