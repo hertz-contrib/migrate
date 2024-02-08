@@ -17,13 +17,12 @@ package chi
 import (
 	. "go/ast"
 
-	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
 	nethttp "github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logic/netHttp"
 
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func PackChiNewRouter(cur *astutil.Cursor) {
+func PackChiNewRouter(cur *astutil.Cursor, globalMap map[string]any) {
 	stmt, ok := cur.Node().(*AssignStmt)
 	if !ok || len(stmt.Lhs) != 1 || len(stmt.Rhs) != 1 {
 		return
@@ -41,7 +40,7 @@ func PackChiNewRouter(cur *astutil.Cursor) {
 			X:   NewIdent("hzserver"),
 			Sel: NewIdent("Default"),
 		}
-		global.Map["server"] = stmt.Lhs[0].(*Ident).Name
-		nethttp.AddOptionsForServer(callExpr, global.Map)
+		globalMap["serverName"] = stmt.Lhs[0].(*Ident).Name
+		nethttp.AddOptionsForServer(callExpr, globalMap)
 	}
 }

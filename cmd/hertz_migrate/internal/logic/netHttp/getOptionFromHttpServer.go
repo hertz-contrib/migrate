@@ -17,12 +17,10 @@ package netHttp
 import (
 	. "go/ast"
 
-	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
-
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func GetOptionsFromHttpServer(cur *astutil.Cursor) {
+func GetOptionsFromHttpServer(cur *astutil.Cursor, globalMap map[string]any) {
 	block, ok := cur.Node().(*BlockStmt)
 	if !ok {
 		return
@@ -34,7 +32,7 @@ func GetOptionsFromHttpServer(cur *astutil.Cursor) {
 		return
 	}
 
-	processHttpServerOptions(block, index)
+	processHttpServerOptions(block, index, globalMap)
 }
 
 // 找到 http.Server 赋值语句的索引
@@ -67,13 +65,13 @@ func findHttpServerAssignment(block *BlockStmt) int {
 }
 
 // 处理 http.Server 赋值语句，更新配置并移除该语句
-func processHttpServerOptions(block *BlockStmt, index int) {
+func processHttpServerOptions(block *BlockStmt, index int, globalMap map[string]any) {
 	compLit := block.List[index].(*AssignStmt).Rhs[0].(*CompositeLit)
 
 	for _, elt := range compLit.Elts {
 		if kvExpr, ok := elt.(*KeyValueExpr); ok {
 			key := kvExpr.Key.(*Ident).Name
-			global.Map[key] = kvExpr.Value
+			globalMap[key] = kvExpr.Value
 		}
 	}
 }

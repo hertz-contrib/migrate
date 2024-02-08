@@ -13,7 +13,6 @@ import (
 
 	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal"
-	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logic/chi"
 	nethttp "github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logic/netHttp"
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/utils"
@@ -23,11 +22,14 @@ import (
 )
 
 func init() {
-	global.Map = make(map[string]interface{})
+	globalMap = make(map[string]interface{})
 	funcSet = mapset.NewSet[string]()
 }
 
-var globalArgs = &Args{}
+var (
+	globalArgs = &Args{}
+	globalMap  map[string]any
+)
 
 type Args struct {
 	TargetDir  string
@@ -79,23 +81,23 @@ func Run(c *cli.Context) error {
 		if err != nil {
 			log.Fatal("Error collecting go files:", err)
 		}
-		//goModDirs = utils.SearchAllDirHasGoMod(globalArgs.TargetDir)
-		//for _, dir := range goModDirs {
-		//	wg.Add(1)
-		//	dir := dir
-		//	go func() {
-		//		defer wg.Done()
-		//		utils.RunGoGet(dir, global.HzRepo)
-		//	}()
-		//}
-		//wg.Wait()
-		//
-		//beforeProcessFiles(gofiles)
-		//processFiles(gofiles, globalArgs.Debug)
-		//
-		//for _, dir := range goModDirs {
-		//	utils.RunGoImports(dir)
-		//}
+		goModDirs = utils.SearchAllDirHasGoMod(globalArgs.TargetDir)
+		for _, dir := range goModDirs {
+			wg.Add(1)
+			dir := dir
+			go func() {
+				defer wg.Done()
+				utils.RunGoGet(dir, globalArgs.HzRepo)
+			}()
+		}
+		wg.Wait()
+
+		beforeProcessFiles(gofiles)
+		processFiles(gofiles, globalArgs.Debug)
+
+		for _, dir := range goModDirs {
+			utils.RunGoImports(dir)
+		}
 	}
 	return nil
 }
@@ -176,14 +178,14 @@ func processFile(path, printMode string, debug bool) {
 }
 
 func processAST(file *ast.File, fset *token.FileSet) {
-	astutil.AddNamedImport(fset, file, "hzserver", global.HzRepo+"/pkg/server")
-	astutil.AddNamedImport(fset, file, "hzapp", global.HzRepo+"/pkg/app")
+	astutil.AddNamedImport(fset, file, "hzserver", globalArgs.HzRepo+"/pkg/server")
+	astutil.AddNamedImport(fset, file, "hzapp", globalArgs.HzRepo+"/pkg/app")
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
-		nethttp.GetOptionsFromHttpServer(c)
-		nethttp.PackServerHertz(c, fset, file)
+		nethttp.GetOptionsFromHttpServer(c, globalMap)
+		nethttp.PackServerHertz(c, globalMap)
 		chi.PackChiMux(c)
-		nethttp.ReplaceNetHttpHandler(c, fset, file)
+		nethttp.ReplaceNetHttpHandler(c)
 		nethttp.PackSetStatusCode(c)
 		return true
 	}, nil)
@@ -197,15 +199,14 @@ func processAST(file *ast.File, fset *token.FileSet) {
 
 func chiGroup(c *astutil.Cursor) {
 	chi.PackChiRouterMethod(c)
-	chi.PackChiNewRouter(c)
+	chi.PackChiNewRouter(c, globalMap)
 	chi.PackChiMux(c)
 }
 
 func netHttpGroup(c *astutil.Cursor, funcSet mapset.Set[string]) {
-	funcsToProcess := []func(*astutil.Cursor){
+	funcsToProcess := []func(c *astutil.Cursor){
 		nethttp.PackHandleFunc,
 		nethttp.PackFprintf,
-		nethttp.PackListenAndServe,
 		nethttp.ReplaceHttpError,
 		nethttp.ReplaceHttpRedirect,
 		nethttp.ReplaceRequestURI,
@@ -224,9 +225,9 @@ func netHttpGroup(c *astutil.Cursor, funcSet mapset.Set[string]) {
 		nethttp.ReplaceReqFormGet,
 		nethttp.ReplaceReqFormValue,
 		nethttp.ReplaceReqMultipartForm,
-		nethttp.ReplaceReqMultipartFormOperation,
 		func(c *astutil.Cursor) {
 			nethttp.PackType2AppHandlerFunc(c)
+			nethttp.ReplaceReqMultipartFormOperation(c, globalMap)
 			nethttp.ReplaceFuncBodyHttpHandlerParam(c, funcSet)
 		},
 	}
