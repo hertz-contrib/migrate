@@ -47,7 +47,7 @@ func RunGoGet(path, repo string, version string) {
 	}
 	var cmd *exec.Cmd
 	if version != "" {
-		cmd = exec.Command("go", "get", repo, version)
+		cmd = exec.Command("go", "get", repo+version)
 	} else {
 		cmd = exec.Command("go", "get", repo)
 	}
