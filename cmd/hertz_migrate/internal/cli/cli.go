@@ -2,6 +2,15 @@ package cli
 
 import (
 	"bytes"
+	"go/ast"
+	"go/parser"
+	"go/printer"
+	"go/token"
+	"log"
+	"os"
+	"path/filepath"
+	"sync"
+
 	mapset "github.com/deckarep/golang-set/v2"
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal"
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
@@ -9,15 +18,8 @@ import (
 	nethttp "github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logic/netHttp"
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/utils"
 	"github.com/urfave/cli/v2"
-	"go/ast"
-	"go/parser"
-	"go/printer"
-	"go/token"
+
 	"golang.org/x/tools/go/ast/astutil"
-	"log"
-	"os"
-	"path/filepath"
-	"sync"
 )
 
 func init() {

@@ -15,9 +15,10 @@
 package main
 
 import (
-	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/cli"
 	"log"
 	"os"
+
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/cli"
 )
 
 func main() {

@@ -16,12 +16,13 @@ package utils
 
 import (
 	"fmt"
-	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
 	. "go/ast"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
 )
 
 // CheckPtrStructName is a function used to check struct name

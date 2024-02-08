@@ -17,6 +17,5 @@ package global
 var (
 	Map        = map[string]any{}
 	HzRepo     string
-	HzVersion  string
 	IgnoreDirs []string
 )
