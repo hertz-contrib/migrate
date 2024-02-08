@@ -72,27 +72,30 @@ func Init() *cli.App {
 func Run(c *cli.Context) error {
 	globalArgs.IgnoreDirs = c.StringSlice("ignore-dirs")
 	if globalArgs.TargetDir != "" {
-		gofiles, err := utils.CollectGoFiles(globalArgs.TargetDir)
+		gofiles, err := utils.CollectGoFiles(globalArgs.TargetDir, globalArgs.IgnoreDirs)
+		for _, f := range gofiles {
+			log.Println(f)
+		}
 		if err != nil {
 			log.Fatal("Error collecting go files:", err)
 		}
-		goModDirs = utils.SearchAllDirHasGoMod(globalArgs.TargetDir)
-		for _, dir := range goModDirs {
-			wg.Add(1)
-			dir := dir
-			go func() {
-				defer wg.Done()
-				utils.RunGoGet(dir, global.HzRepo)
-			}()
-		}
-		wg.Wait()
-
-		beforeProcessFiles(gofiles)
-		processFiles(gofiles, globalArgs.Debug)
-
-		for _, dir := range goModDirs {
-			utils.RunGoImports(dir)
-		}
+		//goModDirs = utils.SearchAllDirHasGoMod(globalArgs.TargetDir)
+		//for _, dir := range goModDirs {
+		//	wg.Add(1)
+		//	dir := dir
+		//	go func() {
+		//		defer wg.Done()
+		//		utils.RunGoGet(dir, global.HzRepo)
+		//	}()
+		//}
+		//wg.Wait()
+		//
+		//beforeProcessFiles(gofiles)
+		//processFiles(gofiles, globalArgs.Debug)
+		//
+		//for _, dir := range goModDirs {
+		//	utils.RunGoImports(dir)
+		//}
 	}
 	return nil
 }

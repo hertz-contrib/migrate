@@ -21,8 +21,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-
-	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
 )
 
 // CheckPtrStructName is a function used to check struct name
@@ -106,20 +104,22 @@ func ReplaceParamsInStr(s string) string {
 	return resultString
 }
 
-func CollectGoFiles(directory string) ([]string, error) {
+func CollectGoFiles(directory string, ignoreDirs []string) ([]string, error) {
+	for _, dir := range ignoreDirs {
+		println("ignoredir", dir)
+	}
 	var goFiles []string
 	abs, err := filepath.Abs(directory)
 	if err != nil {
 		return nil, err
 	}
 	err = filepath.Walk(abs, func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() {
-			for _, dir := range global.IgnoreDirs {
-				if strings.Contains(info.Name(), dir) {
-					return nil
-				}
+		for _, dir := range ignoreDirs {
+			if strings.Contains(path, dir) {
+				return nil
 			}
 		}
+
 		if !info.IsDir() && filepath.Ext(path) == ".go" {
 			goFiles = append(goFiles, path)
 		}
