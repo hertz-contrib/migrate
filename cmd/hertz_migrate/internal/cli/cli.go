@@ -1,44 +1,23 @@
-// Copyright 2024 CloudWeGo Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package logic
+package cli
 
 import (
 	"bytes"
-	"go/ast"
-	"go/parser"
-	"go/printer"
-	"go/token"
-	"log"
-	"os"
-	"path/filepath"
-	"sync"
-
-	"golang.org/x/tools/go/ast/astutil"
-
 	mapset "github.com/deckarep/golang-set/v2"
-	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/args"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal"
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logic/chi"
 	nethttp "github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logic/netHttp"
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/utils"
-)
-
-var (
-	funcSet   mapset.Set[string]
-	goModDirs []string
-	wg        sync.WaitGroup
+	"github.com/urfave/cli/v2"
+	"go/ast"
+	"go/parser"
+	"go/printer"
+	"go/token"
+	"golang.org/x/tools/go/ast/astutil"
+	"log"
+	"os"
+	"path/filepath"
+	"sync"
 )
 
 func init() {
@@ -46,35 +25,81 @@ func init() {
 	funcSet = mapset.NewSet[string]()
 }
 
-func Run(opt args.Args) {
-	global.HzRepo = opt.HzRepo
-	global.HzVersion = opt.HertzVersion
-	global.IgnoreDirs = opt.IgnoreDirs
-	if opt.TargetDir != "" {
-		gofiles, err := utils.CollectGoFiles(opt.TargetDir)
+var globalArgs = &Args{}
+
+type Args struct {
+	TargetDir  string
+	Filepath   string
+	HzRepo     string
+	IgnoreDirs []string
+	Debug      bool
+}
+
+const ignoreDirsText = `
+Fill in the folders to be ignored, separating the folders with ",".
+Example:
+    hertz_migrate -target-dir ./project -ignore-dirs=kitex_gen,hz_gen
+`
+
+func Init() *cli.App {
+	app := cli.NewApp()
+	app.Name = "hertz_migrate"
+	app.Usage = "A tool for migrating to hertz from other go web frameworks"
+	app.Version = internal.Version
+	app.Flags = []cli.Flag{
+		&cli.StringFlag{
+			Name:        "hz-repo",
+			Usage:       "Specify the url of the hertz repository you want to bring in.",
+			DefaultText: "github.com/cloudwego/hertz",
+			Destination: &globalArgs.HzRepo,
+		},
+		&cli.StringFlag{
+			Name:        "target-dir",
+			Usage:       "project directory you wants to migrate",
+			Destination: &globalArgs.TargetDir,
+		},
+		&cli.StringSliceFlag{
+			Name:  "ignore-dirs",
+			Usage: ignoreDirsText,
+		},
+	}
+	app.Action = Run
+	return app
+}
+
+func Run(c *cli.Context) error {
+	globalArgs.IgnoreDirs = c.StringSlice("ignore-dirs")
+	if globalArgs.TargetDir != "" {
+		gofiles, err := utils.CollectGoFiles(globalArgs.TargetDir)
 		if err != nil {
 			log.Fatal("Error collecting go files:", err)
 		}
-		goModDirs = utils.SearchAllDirHasGoMod(opt.TargetDir)
+		goModDirs = utils.SearchAllDirHasGoMod(globalArgs.TargetDir)
 		for _, dir := range goModDirs {
 			wg.Add(1)
 			dir := dir
 			go func() {
 				defer wg.Done()
-				utils.RunGoGet(dir, global.HzRepo, global.HzVersion)
+				utils.RunGoGet(dir, global.HzRepo)
 			}()
 		}
 		wg.Wait()
 
 		beforeProcessFiles(gofiles)
-		processFiles(gofiles, opt.Debug)
+		processFiles(gofiles, globalArgs.Debug)
 
 		for _, dir := range goModDirs {
 			utils.RunGoImports(dir)
 		}
 	}
-	os.Exit(0)
+	return nil
 }
+
+var (
+	funcSet   mapset.Set[string]
+	goModDirs []string
+	wg        sync.WaitGroup
+)
 
 func processFiles(gofiles []string, debug bool) {
 	for _, path := range gofiles {
