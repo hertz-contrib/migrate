@@ -218,37 +218,30 @@ func chiGroup(c *astutil.Cursor) {
 }
 
 func netHttpGroup(c *astutil.Cursor, funcSet mapset.Set[string]) {
-	funcsToProcess := []func(c *astutil.Cursor){
-		nethttp.PackHandleFunc,
-		nethttp.PackFprintf,
-		nethttp.ReplaceHttpError,
-		nethttp.ReplaceHttpRedirect,
-		nethttp.ReplaceRequestURI,
-		nethttp.ReplaceReqMethod,
-		nethttp.ReplaceReqHost,
-		nethttp.ReplaceReqHeader,
-		nethttp.ReplaceReqHeaderOperation,
-		nethttp.ReplaceRespHeader,
-		nethttp.ReplaceRespWrite,
-		nethttp.ReplaceRespNotFound,
-		nethttp.ReplaceReqURLQuery,
-		nethttp.ReplaceReqURLString,
-		nethttp.ReplaceReqURLPath,
-		nethttp.ReplaceReqCookie,
-		nethttp.ReplaceReqFormFile,
-		nethttp.ReplaceReqFormGet,
-		nethttp.ReplaceReqFormValue,
-		nethttp.ReplaceReqMultipartForm,
-		func(c *astutil.Cursor) {
-			nethttp.PackType2AppHandlerFunc(c)
-			nethttp.ReplaceReqMultipartFormOperation(c, globalMap)
-			nethttp.ReplaceFuncBodyHttpHandlerParam(c, funcSet)
-		},
-	}
+	nethttp.PackHandleFunc(c)
+	nethttp.PackFprintf(c)
+	nethttp.ReplaceHttpError(c)
+	nethttp.ReplaceHttpRedirect(c)
+	nethttp.ReplaceRequestURI(c)
+	nethttp.ReplaceReqMethod(c)
+	nethttp.ReplaceReqHost(c)
+	nethttp.ReplaceReqHeader(c)
+	nethttp.ReplaceReqHeaderOperation(c)
+	nethttp.ReplaceRespHeader(c)
+	nethttp.ReplaceRespWrite(c)
+	nethttp.ReplaceRespNotFound(c)
+	nethttp.ReplaceReqURLQuery(c)
+	nethttp.ReplaceReqURLString(c)
+	nethttp.ReplaceReqURLPath(c)
+	nethttp.ReplaceReqCookie(c)
+	nethttp.ReplaceReqFormFile(c)
+	nethttp.ReplaceReqFormGet(c)
+	nethttp.ReplaceReqFormValue(c)
+	nethttp.ReplaceReqMultipartForm(c)
+	nethttp.PackType2AppHandlerFunc(c)
+	nethttp.ReplaceReqMultipartFormOperation(c, globalMap)
+	nethttp.ReplaceFuncBodyHttpHandlerParam(c, funcSet)
 
-	for _, fn := range funcsToProcess {
-		fn(c)
-	}
 }
 
 func formatCodeAfterReplace(fset *token.FileSet, buf bytes.Buffer) *bytes.Buffer {
