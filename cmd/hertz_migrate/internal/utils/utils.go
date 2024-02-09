@@ -20,6 +20,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 )
 
 // CheckPtrStructName is a function used to check struct name
@@ -103,13 +104,22 @@ func ReplaceParamsInStr(s string) string {
 	return resultString
 }
 
-func CollectGoFiles(directory string) ([]string, error) {
+func CollectGoFiles(directory string, ignoreDirs []string) ([]string, error) {
+	for _, dir := range ignoreDirs {
+		println("ignoredir", dir)
+	}
 	var goFiles []string
 	abs, err := filepath.Abs(directory)
 	if err != nil {
 		return nil, err
 	}
 	err = filepath.Walk(abs, func(path string, info os.FileInfo, err error) error {
+		for _, dir := range ignoreDirs {
+			if strings.Contains(path, dir) {
+				return nil
+			}
+		}
+
 		if !info.IsDir() && filepath.Ext(path) == ".go" {
 			goFiles = append(goFiles, path)
 		}
@@ -123,7 +133,7 @@ func CollectGoFiles(directory string) ([]string, error) {
 func SearchAllDirHasGoMod(path string) (dirs []string) {
 	abs, err := filepath.Abs(path)
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println("[Error] search go.mod dir fail, error ", err)
 		return
 	}
 	err = filepath.Walk(abs, func(path string, info os.FileInfo, err error) error {

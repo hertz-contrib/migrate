@@ -16,14 +16,11 @@ package netHttp
 
 import (
 	. "go/ast"
-	"go/token"
-
-	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/global"
 
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File) {
+func PackServerHertz(cur *astutil.Cursor, globalMap map[string]any) {
 	assign, ok := cur.Node().(*AssignStmt)
 	if ok {
 		if len(assign.Lhs) == 1 && len(assign.Rhs) == 1 {
@@ -36,8 +33,8 @@ func PackServerHertz(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 					if ident.Name == "http" && fun.Sel.Name == "NewServeMux" {
 						callExpr.Fun.(*SelectorExpr).X.(*Ident).Name = "hzserver"
 						callExpr.Fun.(*SelectorExpr).Sel.Name = "Default"
-						global.Map["server"] = assign.Lhs[0].(*Ident).Name
-						AddOptionsForServer(callExpr, global.Map)
+						globalMap["serverName"] = assign.Lhs[0].(*Ident).Name
+						AddOptionsForServer(callExpr, globalMap)
 					}
 				}
 			}

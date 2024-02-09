@@ -15,20 +15,16 @@
 package main
 
 import (
+	"log"
 	"os"
 
-	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal"
-	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/args"
-	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logic"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/cli"
 )
 
-var opt args.Args
-
 func main() {
-	opt.Parse()
-	if opt.Version {
-		println(internal.Version)
-		os.Exit(0)
+	app := cli.Init()
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Printf("[Error] %v\n", err)
 	}
-	logic.Run(opt)
 }

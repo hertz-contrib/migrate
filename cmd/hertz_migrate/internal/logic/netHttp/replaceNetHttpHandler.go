@@ -15,22 +15,20 @@
 package netHttp
 
 import (
-	. "go/ast"
-	"go/token"
-
 	mapset "github.com/deckarep/golang-set/v2"
+	. "go/ast"
 
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func ReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, file *File) {
-	noWrapperLine(cur, fset, file)
-	oneWrapperLine(cur, fset, file)
-	twoWrapperLine(cur, fset, file)
-	fieldListReplaceNetHttpHandler(cur, fset, file)
+func ReplaceNetHttpHandler(cur *astutil.Cursor) {
+	noWrapperLine(cur)
+	oneWrapperLine(cur)
+	twoWrapperLine(cur)
+	fieldListReplaceNetHttpHandler(cur)
 }
 
-func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, file *File) {
+func fieldListReplaceNetHttpHandler(cur *astutil.Cursor) {
 	var (
 		rwIndex   = -1
 		rIndex    = -1
@@ -181,7 +179,7 @@ func fieldListReplaceNetHttpHandler(cur *astutil.Cursor, fset *token.FileSet, fi
 	fieldList.List = fields
 }
 
-func twoWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
+func twoWrapperLine(cur *astutil.Cursor) {
 	var (
 		paramList []*Field
 		hasName   = true
@@ -266,7 +264,7 @@ func twoWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	}
 }
 
-func oneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
+func oneWrapperLine(cur *astutil.Cursor) {
 	var (
 		paramList []*Field
 		hasName   = true
@@ -344,7 +342,7 @@ func oneWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
 	}
 }
 
-func noWrapperLine(cur *astutil.Cursor, fset *token.FileSet, file *File) {
+func noWrapperLine(cur *astutil.Cursor) {
 	var (
 		rwIndex   = -1
 		rIndex    = -1
