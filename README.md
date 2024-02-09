@@ -1,5 +1,5 @@
 ## hertz_migrate
-通过分析 ast 对代码进行迁移，目前 `hertz_migrate` 支持迁移的框架有 chi (暂只支持 `func (http.ResponseWriter, *http.Request) net/http` 的迁移)
+通过分析 ast 对代码进行迁移，目前 `hertz_migrate` 支持迁移的框架有 net/http 、chi (暂只支持 `func (http.ResponseWriter, *http.Request) net/http` 的迁移)
 
 [README](./cmd/hertz_migrate/readme.md)
 
