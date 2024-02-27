@@ -186,7 +186,7 @@ func processFile(path string, debug bool) {
 }
 
 func processAST(file *ast.File, fset *token.FileSet) {
-	astutil.AddNamedImport(fset, file, "hzserver", globalArgs.HzRepo+"/pkg/server")
+	astutil.AddNamedImport(fset, file, "hzserver", globalArgs.HzRepo+"/pkg/app/server")
 	astutil.AddNamedImport(fset, file, "hzapp", globalArgs.HzRepo+"/pkg/app")
 
 	astutil.Apply(file, func(c *astutil.Cursor) bool {
