@@ -12,37 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package netHttp
+package gin
 
 import (
 	. "go/ast"
 
-	"golang.org/x/tools/go/ast/astutil"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/types"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/utils"
 )
 
-func PackSetStatusCode(cur *astutil.Cursor) {
-	callExpr, ok := cur.Node().(*CallExpr)
-	if !ok {
-		return
-	}
-	selExpr, ok := callExpr.Fun.(*SelectorExpr)
-	if !ok {
-		return
-	}
-	if selExpr.Sel == nil {
-		return
-	}
-	if selExpr.Sel.Name == "WriteHeader" {
-		if ident, ok := selExpr.X.(*Ident); ok {
-			if field, ok := ident.Obj.Decl.(*Field); ok {
-				expr, ok := field.Type.(*SelectorExpr)
-				if ok {
-					if expr.Sel.Name == "ResponseWriter" {
-						se := &SelectorExpr{
-							X:   NewIdent("c"),
-							Sel: NewIdent("SetStatusCode"),
-						}
-						callExpr.Fun = se
+func ReplaceStatisFS(call *CallExpr) {
+	if se, ok := call.Fun.(*SelectorExpr); ok {
+		switch se.Sel.Name {
+		case "StaticFS":
+			httpSystemExpr := call.Args[1]
+			if _call, ok := httpSystemExpr.(*CallExpr); ok {
+				if _se, ok := _call.Fun.(*SelectorExpr); ok {
+					if utils.CheckSelPkgAndStruct(_se, "gin", "Dir") {
+						root := _call.Args[0]
+						listDir := _call.Args[1]
+						call.Args[1] = types.ExportedAppFSPtr(root, listDir)
 					}
 				}
 			}

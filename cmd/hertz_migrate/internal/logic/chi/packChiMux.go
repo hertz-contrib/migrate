@@ -17,27 +17,14 @@ package chi
 import (
 	. "go/ast"
 
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/types"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/utils"
+
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func PackChiMux(cur *astutil.Cursor) {
-	funcType, ok := cur.Node().(*FuncType)
-	if !ok || funcType.Results == nil {
-		return
-	}
-
-	if len(funcType.Results.List) == 1 {
-		starExpr, ok := funcType.Results.List[0].Type.(*StarExpr)
-		if !ok {
-			return
-		}
-		selExpr, ok := starExpr.X.(*SelectorExpr)
-		if !ok {
-			return
-		}
-		if selExpr.Sel.Name == "Mux" && selExpr.X.(*Ident).Name == "chi" {
-			selExpr.X.(*Ident).Name = "hzserver"
-			selExpr.Sel.Name = "Hertz"
-		}
+func PackChiMux(c *astutil.Cursor, node *StarExpr) {
+	if utils.CheckPtrPkgAndStructName(node, "chi", "Mux") {
+		c.Replace(types.StarServerHertz)
 	}
 }

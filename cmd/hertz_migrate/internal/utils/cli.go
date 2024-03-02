@@ -16,6 +16,7 @@ package utils
 
 import (
 	"fmt"
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logs"
 	"log"
 	"os"
 	"os/exec"
@@ -52,6 +53,22 @@ func RunGoGet(path, repo string) {
 	err = cmd.Run()
 	if err != nil {
 		fmt.Println("Error running command:", err)
+		return
+	}
+}
+
+func RunGoModTidy(path string) {
+	err := os.Chdir(path)
+	if err != nil {
+		logs.Error("Error changing directory:", err)
+		return
+	}
+	cmd := exec.Command("go", "mod", "tidy")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	err = cmd.Run()
+	if err != nil {
+		logs.Error("Error running command:", err)
 		return
 	}
 }

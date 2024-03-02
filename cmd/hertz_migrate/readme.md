@@ -2,7 +2,10 @@
 
 ### Introduction
 
-Migrate go web code by analyzing ast, currently `hertz_migrate` supports migrating the following frameworks chi (only `func (http.ResponseWriter, *http.Request)` net/http migrations are supported for now)
+Migrate go web code by analyzing ast, currently `hertz_migrate` supports migrating the following frameworks:
+
+- chi (only `func (http.ResponseWriter, *http.Request)` net/http migrations are supported for now)
+- gin
 
 ### How to install
 
@@ -43,11 +46,17 @@ GLOBAL OPTIONS:
 ```bash
 # example hertz_migration -target-dir ./haha
 hertz_migrate -target-dir ${dir-name}
+# ignore some dirs
+hertz_migrate -target-dir ${dir-name} -I=kitex_gen -I=hz_gen
+# migrate with gin
+hertz_migrate -target-dir ${dir-name} -use-gin
 ```
 
 ### Adapt progress
+
 [readme](./adapt.md)
 
 ### Warn
 
-1. You must make sure that each subproject in the `target-dir` has a `go.mod` file, but you can continue to use it even if it doesn't
+1. You must make sure that each subproject in the `target-dir` has a `go.mod` file, but you can continue to use it even
+   if it doesn't

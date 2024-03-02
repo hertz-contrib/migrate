@@ -22,7 +22,7 @@ import (
 	"golang.org/x/tools/go/ast/astutil"
 )
 
-func CollectHandlerFuncName(cur *astutil.Cursor, funcSet mapset.Set[string]) {
+func FindHandlerFuncName(cur *astutil.Cursor, funcSet mapset.Set[string]) {
 	collectTmpFuncName(cur, funcSet)
 	collectCommonFuncName(cur, funcSet)
 	collectExprStmtName(cur, funcSet)

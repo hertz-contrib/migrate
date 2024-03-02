@@ -19,16 +19,24 @@ import (
 	"go/token"
 
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/utils"
-	"golang.org/x/tools/go/ast/astutil"
 )
 
-func PackChiRouterMethod(cur *astutil.Cursor) {
-	callExpr, ok := cur.Node().(*CallExpr)
-	if !ok || len(callExpr.Args) < 2 {
+func PackChiRouterMethod(callExpr *CallExpr) {
+	if len(callExpr.Args) < 2 {
 		return
 	}
 	selExpr, ok := callExpr.Fun.(*SelectorExpr)
 	if !ok || selExpr.Sel == nil {
+		return
+	}
+
+	if ident, ok := selExpr.X.(*Ident); ok {
+		if !utils.CheckObjStarExpr(ident.Obj, "chi", "Mux") {
+			return
+		}
+	}
+
+	if _, ok := selExpr.X.(*SelectorExpr); ok {
 		return
 	}
 
