@@ -130,7 +130,7 @@ func CollectGoFiles(directory string, ignoreDirs []string) ([]string, error) {
 	return goFiles, err
 }
 
-func SearchAllDirHasGoMod(path string) (dirs []string) {
+func SearchAllDirHasGoMod(path string) (dirs []string, err error) {
 	abs, err := filepath.Abs(path)
 	if err != nil {
 		fmt.Println("[Error] search go.mod dir fail, error ", err)
@@ -146,7 +146,7 @@ func SearchAllDirHasGoMod(path string) (dirs []string) {
 		return nil
 	})
 	if err != nil {
-		fmt.Println("Error:", err)
+		return nil, err
 	}
-	return dirs
+	return dirs, nil
 }

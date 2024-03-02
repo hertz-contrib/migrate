@@ -12,25 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package netHttp
+package gin
 
 import (
-	. "go/ast"
-
-	"golang.org/x/tools/go/ast/astutil"
+	"go/ast"
 )
 
-func PackListenAndServe(cur *astutil.Cursor, globalMap map[string]any) {
-	selExpr, ok := cur.Node().(*SelectorExpr)
-	if ok {
-		if selExpr.Sel == nil {
-			return
-		}
-		if selExpr.Sel.Name == "ListenAndServe" {
-			v, ok := globalMap["serverName"]
-			if ok {
-				selExpr.X.(*Ident).Name = v.(string)
-				selExpr.Sel.Name = "Spin"
+func ReplaceErrorType(se *ast.SelectorExpr) {
+	if ident, ok := se.X.(*ast.Ident); ok {
+		switch se.Sel.Name {
+		case "ErrorTypeBind", "ErrorTypeRender", "ErrorTypePrivate", "ErrorTypePublic", "ErrorTypeAny", "ErrorTypeNu":
+			if ident.Name == "gin" {
+				ident.Name = "hzerrors"
 			}
 		}
 	}

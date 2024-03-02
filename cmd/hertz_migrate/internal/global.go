@@ -12,33 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package netHttp
+package internal
 
 import (
-	. "go/ast"
+	"go/ast"
 
-	"golang.org/x/tools/go/ast/astutil"
+	mapset "github.com/deckarep/golang-set/v2"
 )
 
-func ReplaceRespNotFound(cur *astutil.Cursor) {
-	callExpr, ok := cur.Node().(*CallExpr)
-	if !ok {
-		return
-	}
+var (
+	CtxSet     mapset.Set[string]
+	WebCtxSet  mapset.Set[string]
+	Options    []ast.Expr
+	ServerName string
+)
 
-	selExpr, ok := callExpr.Fun.(*SelectorExpr)
-	if !ok {
-		return
-	}
-
-	ident, ok := selExpr.X.(*Ident)
-	if !ok || ident.Name != "http" || selExpr.Sel.Name != "NotFound" {
-		return
-	}
-
-	callExpr.Fun = &SelectorExpr{
-		X:   NewIdent("c"),
-		Sel: NewIdent("NotFound"),
-	}
-	callExpr.Args = []Expr{}
+func init() {
+	CtxSet = mapset.NewSet[string]()
+	WebCtxSet = mapset.NewSet[string]()
 }

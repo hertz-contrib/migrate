@@ -15,16 +15,21 @@
 package main
 
 import (
-	"log"
 	"os"
+
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/logs"
 
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/cli"
 )
 
 func main() {
+	defer func() {
+		logs.Flush()
+	}()
+
 	app := cli.Init()
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Printf("[Error] %v\n", err)
+		logs.Errorf("[Error] %v\n", err)
 	}
 }

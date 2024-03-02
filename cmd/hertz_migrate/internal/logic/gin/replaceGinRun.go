@@ -12,41 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package netHttp
+package gin
 
 import (
-	. "go/ast"
+	"go/ast"
 
+	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal"
 	"github.com/hertz-contrib/migrate/cmd/hertz_migrate/internal/utils"
-
-	"golang.org/x/tools/go/ast/astutil"
 )
 
-func ReplaceReqFormFile(cur *astutil.Cursor) {
-	stmt, ok := cur.Node().(*AssignStmt)
-	if !ok || len(stmt.Lhs) != 3 || len(stmt.Rhs) != 1 {
-		return
-	}
-
-	ce, ok := stmt.Rhs[0].(*CallExpr)
-	if !ok || len(ce.Args) != 1 {
-		return
-	}
-
-	selExpr, ok := ce.Fun.(*SelectorExpr)
-	if !ok || selExpr.Sel.Name != "FormFile" {
-		return
-	}
-
-	if utils.CheckPtrStructName(selExpr, "Request") {
-		se := &SelectorExpr{
-			X: &SelectorExpr{
-				X:   NewIdent("c"),
-				Sel: NewIdent("Request"),
-			},
-			Sel: NewIdent("FormFile"),
+func ReplaceGinRun(node *ast.CallExpr) {
+	if sel, ok := node.Fun.(*ast.SelectorExpr); ok {
+		if ident, ok := sel.X.(*ast.Ident); ok {
+			if utils.CheckObjSelExpr(ident.Obj, "hzserver", "Default") ||
+				utils.CheckObjStarExpr(ident.Obj, "hzserver", "Hertz") {
+				if sel.Sel.Name == "Run" {
+					sel.Sel.Name = "Spin"
+					node.Args = []ast.Expr{}
+				}
+			}
+			if utils.CheckObjSelExpr(ident.Obj, "http", "Server") {
+				if sel.Sel.Name == "ListenAndServe" {
+					ident.Name = internal.ServerName
+					sel.Sel.Name = "Run"
+				}
+			}
 		}
-		ce.Fun = se
-		stmt.Lhs = stmt.Lhs[1:]
 	}
 }

@@ -12,27 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package netHttp
+package internal
 
-import (
-	. "go/ast"
+import "errors"
 
-	"golang.org/x/tools/go/ast/astutil"
+var (
+	ErrCollectGoFiles = errors.New("collect go files error")
+	ErrSearchGoMod    = errors.New("search go.mod dir fail")
+	ErrParseFile      = errors.New("parse go file fail")
+	ErrSaveChanges    = errors.New("change go file fail")
+	ErrGetAbsPath     = errors.New("get absolute path fail")
+	ErrRunCommand     = errors.New("run command fail")
+	ErrChangeDir      = errors.New("change directory fail")
 )
-
-func ReplaceReqURLString(cur *astutil.Cursor) {
-	selExpr, ok := cur.Node().(*SelectorExpr)
-	if !ok || selExpr.Sel == nil || selExpr.Sel.Name != "String" {
-		return
-	}
-	ce, ok := selExpr.X.(*SelectorExpr)
-	if !ok || ce.Sel.Name != "URL" {
-		return
-	}
-	selExpr.X = &CallExpr{
-		Fun: &SelectorExpr{
-			X:   NewIdent("c"),
-			Sel: NewIdent("URI"),
-		},
-	}
-}

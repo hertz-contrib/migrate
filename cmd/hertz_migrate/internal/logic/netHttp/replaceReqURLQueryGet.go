@@ -16,16 +16,9 @@ package netHttp
 
 import (
 	. "go/ast"
-
-	"golang.org/x/tools/go/ast/astutil"
 )
 
-func ReplaceReqURLQuery(cur *astutil.Cursor) {
-	callExpr, ok := cur.Node().(*CallExpr)
-	if !ok || len(callExpr.Args) != 1 {
-		return
-	}
-
+func ReplaceReqURLQuery(callExpr *CallExpr) {
 	_selExpr, ok := callExpr.Fun.(*SelectorExpr)
 	if !ok {
 		return
